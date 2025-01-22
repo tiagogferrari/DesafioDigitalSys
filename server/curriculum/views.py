@@ -70,7 +70,7 @@ class RegisterView(APIView):
             return Response({"message": "Usuário criado com sucesso!"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# View para obter o token JWT
+# View para obter o token JWT.
 class LoginView(APIView):
     def post(self, request):
         user = User.objects.filter(username=request.data.get('username')).first()

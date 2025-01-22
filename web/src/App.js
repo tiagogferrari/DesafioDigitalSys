@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Curriculums from './pages/Home';
+import Home from './pages/Home';
 import Auth from './pages/Auth';
 
 function App() {
@@ -9,9 +9,9 @@ function App() {
       <div className="App">
         <Routes>
           {/* Define a rota principal */}
-          <Route path="/" element={<Auth />} />
+          <Route path="/" element={<Home />} />
           {/* Rota para Curriculums */}
-          <Route path="/home" element={<Curriculums />} />
+          <Route path="/login" element={<Auth />} />
         </Routes>
       </div>
     </Router>

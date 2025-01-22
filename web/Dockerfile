@@ -1,20 +1,20 @@
-# Imagem base com Node.js
-FROM node:16
+# Use a versão 18 do Node.js (LTS)
+FROM node:22.13.1
 
-# Diretório de trabalho no container
+# Define o diretório de trabalho
 WORKDIR /app
 
-# Copia os arquivos de dependências do React
-COPY package.json package-lock.json /app/
+# Copia os arquivos de pacotes para o diretório de trabalho
+COPY package*.json ./
 
-# Instala as dependências do React
+# Instala as dependências
 RUN npm install
 
-# Copia o código da aplicação React
-COPY . /app/
+# Copia o restante do código-fonte
+COPY . .
 
-# Expõe a porta em que o React vai rodar
+# Expõe a porta
 EXPOSE 3000
 
-# Define o comando para rodar o servidor de desenvolvimento React
+# Inicia o servidor
 CMD ["npm", "start"]

@@ -1,67 +1,40 @@
-/*
-import React, { useEffect, useState } from "react";
+import React from 'react';
+import { Link } from 'react-router-dom';  // Certifique-se de ter o react-router-dom instalado
 
 const Home = () => {
-  const [curriculums, setCurriculums] = useState([]);
-
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/curriculums/")
-      .then((response) => response.json())
-      .then((data) => setCurriculums(data));
-  }, []);
-
   return (
-    <div>
-      <h1>Currículos</h1>
-      {curriculums.map((curriculum) => (
-        <div key={curriculum.id} style={{ border: "1px solid #ccc", margin: "10px", padding: "10px" }}>
-          <h2>{curriculum.nome}</h2>
-          <p><strong>Data de Nascimento:</strong> {curriculum.data_nascimento}</p>
-          <p><strong>Gênero:</strong> {curriculum.genero}</p>
-          <p><strong>Nacionalidade:</strong> {curriculum.nacionalidade}</p>
+    <div className="bg-gradient-to-r from-blue-500 to-green-500 min-h-screen flex flex-col">
+      {/* Header */}
+      <header className="text-white p-6 text-center">
+        <h1 className="text-4xl font-bold">Pegho</h1>
+        <p className="mt-2 text-lg">Conectando talentos ao futuro</p>
+      </header>
 
-          <h3>Contatos</h3>
-          <ul>
-            {curriculum.contatos.map((contato) => (
-              <li key={contato.id}>
-                <p><strong>Email:</strong> {contato.email}</p>
-                <p><strong>Telefone:</strong> {contato.telefone}</p>
-                <p><strong>Endereço:</strong> {contato.endereco}</p>
-              </li>
-            ))}
-          </ul>
+      {/* Main Section */}
+      <main className="flex-grow flex flex-col justify-center items-center space-y-6">
+        <h2 className="text-2xl text-white">Bem-vindo à Peghooo!</h2>
+        <p className="text-white text-center px-6">
+          Somos uma empresa especializada em seleção e recrutamento, conectando as melhores oportunidades
+          aos talentos certos. Faça login para acessar a nossa plataforma.
+        </p>
+        
+        {/* Login Section */}
+        <Link
+          to="/login"
+          className="bg-yellow-400 text-white py-3 px-6 rounded-full text-xl hover:bg-yellow-500 transition-colors"
+        >
+          Fazer Login
+        </Link>
+      </main>
 
-          <h3>Experiências</h3>
-          <ul>
-            {curriculum.experiencias.map((exp) => (
-              <li key={exp.id}>
-                <p><strong>Cargo:</strong> {exp.cargo}</p>
-                <p><strong>Empresa:</strong> {exp.empresa}</p>
-                <p>
-                  <strong>Período:</strong> {exp.data_inicio} a {exp.data_fim}
-                </p>
-              </li>
-            ))}
-          </ul>
-
-          <h3>Formações</h3>
-          <ul>
-            {curriculum.formacoes.map((formacao) => (
-              <li key={formacao.id}>
-                <p><strong>Curso:</strong> {formacao.curso}</p>
-                <p><strong>Instituição:</strong> {formacao.instituicao}</p>
-                <p><strong>Nível:</strong> {formacao.nivel}</p>
-                <p>
-                  <strong>Período:</strong> {formacao.data_inicio} a {formacao.data_conclusao}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      {/* Footer */}
+      <footer className="bg-gray-800 text-white text-center p-4">
+        <p>&copy; 2025 Pegho | Todos os direitos reservados.</p>
+        <p>Endereço: Rua Exemplo, 123 - Cidade, Estado</p>
+        <p>Contato: contato@pegho.com</p>
+      </footer>
     </div>
   );
 };
 
 export default Home;
-*/
