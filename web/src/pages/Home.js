@@ -10,14 +10,14 @@ const Home = () => {
   return (
     <div className="bg-gradient-to-r from-blue-500 to-blue-300 min-h-screen flex flex-col">
       {/* Header */}
-      <header className="text-white p-6 text-center relative">
+      <header className="text-white pb-6 pt-5 text-center relative">
         <h1 className="text-4xl font-bold" style={{ fontFamily: "'Playwrite IN', serif", fontWeight: 600 }}>
           Pegho
         </h1>
         <button
         type='button'
           onClick={() => setShowPopup(true)} // Abre o popup ao clicar no ícone
-          className="text-white py-2 px-4 absolute top-4 right-6 flex items-center space-x-2"
+          className="text-white hover:text-gray-100 px-4 absolute top-4 right-6 flex items-center space-x-2"
         >
           <AccountCircleIcon style={{ fontSize: 40 }} /> {/* Ícone de login */}
         </button>
