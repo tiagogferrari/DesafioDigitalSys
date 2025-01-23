@@ -79,5 +79,6 @@ class LoginView(APIView):
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
+                'is_superuser': user.is_superuser, 
             })
         return Response({"detail": "Credenciais inválidas!"}, status=status.HTTP_401_UNAUTHORIZED)

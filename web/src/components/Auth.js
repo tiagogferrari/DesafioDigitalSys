@@ -27,11 +27,20 @@ const Auth = ({ setShowPopup }) => {
 
         try {
             const response = await axios.post(url, body);
-            setMessage(isRegister ? 'Registrado com sucesso!' : 'Login realizado com sucesso!');
             if (!isRegister) {
-                const token = response.data.token;
+                const token = response.data.access; // Acessando o token
+                const isSuperuser = response.data.is_superuser; // Acessando o status de superusuário
                 localStorage.setItem('token', token);
+                localStorage.setItem('is_superuser', isSuperuser); // Salva o status no localStorage
                 console.log('Token:', token);
+                console.log('Superusuário:', isSuperuser);
+
+                // Redirecionamento baseado no status de superusuário
+                if (isSuperuser) {
+                    window.location.href = '/admin'; // Exemplo de rota para superusuário
+                } else {
+                    window.location.href = '/curriculo'; // Exemplo de rota para usuário normal
+                }
             }
         } catch (error) {
             if (error.response) {
@@ -40,6 +49,7 @@ const Auth = ({ setShowPopup }) => {
                 setMessage('Erro de conexão com o servidor.');
             }
         }
+
     };
 
     const toggleAuthMode = (mode) => {
