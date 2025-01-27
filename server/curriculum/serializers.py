@@ -17,9 +17,9 @@ class FormacaoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CurriculumSerializer(serializers.ModelSerializer):
-    contatos = ContatoSerializer(many=True)
-    experiencias = ExperienciaSerializer(many=True)
-    formacoes = FormacaoSerializer(many=True)
+    contatos = ContatoSerializer(many=True, read_only=True)
+    experiencias = ExperienciaSerializer(many=True, read_only=True)
+    formacoes = FormacaoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Curriculum

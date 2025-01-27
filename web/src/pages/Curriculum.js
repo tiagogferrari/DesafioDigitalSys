@@ -16,23 +16,19 @@ const Curriculo = () => {
         telefone: '',
         endereco: '',
     });
-    const [experiencias, setExperiencias] = useState([
-        {
-            cargo: '',
-            empresa: '',
-            data_inicio: '',
-            data_fim: '',
-        },
-    ]);
-    const [formacoes, setFormacoes] = useState([
-        {
-            curso: '',
-            instituicao: '',
-            nivel: '',
-            data_inicio: '',
-            data_conclusao: '',
-        },
-    ]);
+    const [experiencia, setExperiencia] = useState({
+        cargo: '',
+        empresa: '',
+        data_inicio: '',
+        data_fim: '',
+    });
+    const [formacao, setFormacao] = useState({
+        curso: '',
+        instituicao: '',
+        nivel: '',
+        data_inicio: '',
+        data_conclusao: '',
+    });
 
     const dadosPessoaisCompletos = () => {
         return (
@@ -49,19 +45,21 @@ const Curriculo = () => {
             contato.endereco
         );
     };
-    const experienciasCompletas = () => {
-        return experiencias.every(
-            (exp) => exp.empresa && exp.cargo && exp.data_inicio && exp.data_fim
+    const experienciaCompleta = () => {
+        return (
+            experiencia.empresa &&
+            experiencia.cargo &&
+            experiencia.data_inicio &&
+            experiencia.data_fim
         );
     };
-    const formacoesCompletas = () => {
-        return formacoes.every(
-            (formacao) =>
-                formacao.instituicao &&
-                formacao.curso &&
-                formacao.nivel &&
-                formacao.data_inicio &&
-                formacao.data_conclusao
+    const formacaoCompleta = () => {
+        return (
+            formacao.instituicao &&
+            formacao.curso &&
+            formacao.nivel &&
+            formacao.data_inicio &&
+            formacao.data_conclusao
         );
     };
 
@@ -84,6 +82,7 @@ const Curriculo = () => {
             });
 
             if (response.data) {
+                // Verifique e defina valores padrão seguros para evitar null/undefined nos campos
                 setDadosPessoais(response.data.curriculum || {
                     nome: '',
                     data_nascimento: '',
@@ -97,20 +96,21 @@ const Curriculo = () => {
                     endereco: '',
                 });
 
-                setExperiencias(response.data.experiencias || [{
+                // Certifique-se de que o estado 'experiencia' tenha uma estrutura segura
+                setExperiencia(response.data.experiencias[0] || {
                     cargo: '',
                     empresa: '',
                     data_inicio: '',
                     data_fim: '',
-                }]);
+                });
 
-                setFormacoes(response.data.formacoes || [{
+                setFormacao(response.data.formacoes[0] || {
                     curso: '',
                     instituicao: '',
                     nivel: '',
                     data_inicio: '',
                     data_conclusao: '',
-                }]);
+                });
             }
         } catch (error) {
             console.error('Erro ao buscar currículo:', error);
@@ -120,11 +120,169 @@ const Curriculo = () => {
         }
     }, []);
 
+    const salvarOuEditarDadosPessoais = async () => {
+        const token = localStorage.getItem('token');
+
+        try {
+            let response;
+            if (dadosPessoais.id) {
+                // Atualiza os dados pessoais (PUT)
+                response = await axios.put(
+                    `http://127.0.0.1:8000/api/curriculums/${dadosPessoais.id}/`,
+                    dadosPessoais, // Envia apenas os dados pessoais
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            } else {
+                // Cria novos dados pessoais (POST)
+                response = await axios.post(
+                    'http://127.0.0.1:8000/api/curriculums/',
+                    dadosPessoais, // Envia apenas os dados pessoais
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            }
+
+            console.log('Dados pessoais salvos/atualizados:', response.data);
+            alert('Dados pessoais salvos/atualizados com sucesso!');
+
+            // Atualiza o estado com os novos dados
+            setDadosPessoais(response.data);
+        } catch (error) {
+            console.error('Erro ao salvar/editar dados pessoais:', error);
+            alert('Erro ao salvar/editar dados pessoais. Verifique o console para mais detalhes.');
+        }
+    };
+
+    const salvarOuEditarContato = async () => {
+        const token = localStorage.getItem('token');
+
+        try {
+            let response;
+            if (contato.id) {
+                // Atualiza o contato (PUT)
+                response = await axios.put(
+                    `http://127.0.0.1:8000/api/contatos/${contato.id}/`,
+                    contato, // Envia apenas o contato
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            } else {
+                // Cria um novo contato (POST)
+                response = await axios.post(
+                    'http://127.0.0.1:8000/api/contatos/',
+                    contato, // Envia apenas o contato
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            }
+
+            console.log('Contato salvo/atualizado:', response.data);
+            alert('Contato salvo/atualizado com sucesso!');
+
+            // Atualiza o estado com os novos dados
+            setContato(response.data);
+        } catch (error) {
+            console.error('Erro ao salvar/editar contato:', error);
+            alert('Erro ao salvar/editar contato. Verifique o console para mais detalhes.');
+        }
+    };
+
+    const salvarOuEditarExperiencia = async () => {
+        const token = localStorage.getItem('token');
+
+        try {
+            let response;
+            if (experiencia.id) {
+                // Atualiza a experiência existente (PUT)
+                response = await axios.put(
+                    `http://127.0.0.1:8000/api/experiencias/${experiencia.id}/`,
+                    experiencia, // Envia apenas a experiência
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            } else {
+                // Cria uma nova experiência (POST)
+                response = await axios.post(
+                    'http://127.0.0.1:8000/api/experiencias/',
+                    experiencia, // Envia apenas a experiência
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            }
+
+            console.log('Experiência salva/atualizada:', response.data);
+            alert('Experiência salva/atualizada com sucesso!');
+
+            // Atualiza o estado com os dados da nova experiência
+            setExperiencia(response.data);
+        } catch (error) {
+            console.error('Erro ao salvar/editar experiência:', error);
+            alert('Erro ao salvar/editar experiência. Verifique o console para mais detalhes.');
+        }
+    };
+
+    const salvarOuEditarFormacao = async () => {
+        const token = localStorage.getItem('token');
+
+        try {
+            let response;
+            if (formacao.id) {
+                // Atualiza a formação existente (PUT)
+                response = await axios.put(
+                    `http://127.0.0.1:8000/api/formacoes/${formacao.id}/`,
+                    formacao, // Envia a formação inteira
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            } else {
+                // Cria uma nova formação (POST)
+                response = await axios.post(
+                    'http://127.0.0.1:8000/api/formacoes/',
+                    formacao, // Envia a formação inteira
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            }
+
+            console.log('Formação salva/atualizada:', response.data);
+            alert('Formação salva/atualizada com sucesso!');
+
+            // Atualiza o estado com os dados da nova formação
+            setFormacao(response.data);
+        } catch (error) {
+            console.error('Erro ao salvar/editar formação:', error);
+            alert('Erro ao salvar/editar formação. Verifique o console para mais detalhes.');
+        }
+    };
+
     useEffect(() => {
         buscarCurriculoUsuario();
     }, [buscarCurriculoUsuario]);
-
-    console.log(dadosPessoais)
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -234,11 +392,12 @@ const Curriculo = () => {
                                             </div>
                                             <div className="flex justify-end">
                                                 <button
-                                                    type="submit"
+                                                    type="button"
+                                                    onClick={salvarOuEditarDadosPessoais} // Chama a função específica
                                                     className="mt-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-lg shadow-lg text-sm font-semibold transition hover:from-blue-700 hover:to-blue-500"
                                                     style={{ fontFamily: "Roboto Flex, serif", fontWeight: 300 }}
                                                 >
-                                                    Salvar e continuar
+                                                    {dadosPessoais.id ? 'Salvar Alterações' : 'Salvar e Continuar'}
                                                 </button>
                                             </div>
                                         </form>
@@ -313,11 +472,12 @@ const Curriculo = () => {
                                             </div>
                                             <div className="flex justify-end">
                                                 <button
-                                                    type="submit"
+                                                    type="button"
+                                                    onClick={salvarOuEditarContato} // Chama a função específica
                                                     className="mt-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-lg shadow-lg text-sm font-semibold transition hover:from-blue-700 hover:to-blue-500"
                                                     style={{ fontFamily: "Roboto Flex, serif", fontWeight: 300 }}
                                                 >
-                                                    Salvar e continuar
+                                                    {dadosPessoais.id ? 'Salvar Alterações' : 'Salvar e Continuar'}
                                                 </button>
                                             </div>
                                         </form>
@@ -336,7 +496,7 @@ const Curriculo = () => {
                                 <div className="flex items-center">
                                     Experiência
                                 </div>
-                                {experienciasCompletas() && (
+                                {experienciaCompleta() && (
                                     <div className="absolute left-[200px] top-1/2 transform -translate-y-1/2">
                                         <div className="bg-green-500 rounded-full p-1">
                                             <HiCheck className="text-white" size={15} />
@@ -352,85 +512,89 @@ const Curriculo = () => {
                                 className={`overflow-hidden ${expandedSection === 'experience' ? 'max-h-[1000px]' : 'max-h-0'}`}
                             >
                                 {expandedSection === 'experience' && (
-                                    <div className="p-4 border-t space-y-4">
+                                    <div className="p-4 border-t space-y-6">
                                         <form>
-                                            {experiencias.map((exp) => (
-                                                <div key={exp.id} className="space-y-4">
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        <div>
-                                                            <label htmlFor={`company-${exp.id}`} className="block text-gray-700 text-lg">Empresa *</label>
-                                                            <input
-                                                                id={`company-${exp.id}`}
-                                                                type="text"
-                                                                placeholder='Insira o nome da empresa'
-                                                                value={exp.empresa}
-                                                                onChange={(e) => {
-                                                                    const novasExperiencias = experiencias.map((item) =>
-                                                                        item.id === exp.id ? { ...item, empresa: e.target.value } : item
-                                                                    );
-                                                                    setExperiencias(novasExperiencias);
-                                                                }}
-                                                                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label htmlFor={`role-${exp.id}`} className="block text-gray-700 text-lg">Cargo *</label>
-                                                            <input
-                                                                id={`role-${exp.id}`}
-                                                                type="text"
-                                                                placeholder='Insira o cargo exercido'
-                                                                value={exp.cargo}
-                                                                onChange={(e) => {
-                                                                    const novasExperiencias = experiencias.map((item) =>
-                                                                        item.id === exp.id ? { ...item, cargo: e.target.value } : item
-                                                                    );
-                                                                    setExperiencias(novasExperiencias);
-                                                                }}
-                                                                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                            />
-                                                        </div>
+                                            {/* Apenas uma experiência, sem map */}
+                                            <div className="space-y-4 border p-4 rounded-lg mb-4">
+                                                {/* Título Dinâmico */}
+                                                <h2 className="text-xl font-bold text-gray-800">
+                                                    {experiencia.empresa || 'Experiência'}
+                                                </h2>
+
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label htmlFor="company-0" className="block text-gray-700 text-lg">Empresa *</label>
+                                                        <input
+                                                            id="company-0"
+                                                            type="text"
+                                                            placeholder="Insira o nome da empresa"
+                                                            value={experiencia.empresa}
+                                                            onChange={(e) => {
+                                                                setExperiencia({ ...experiencia, empresa: e.target.value });
+                                                            }}
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        />
                                                     </div>
-                                                    <div className="grid grid-cols-2 gap-4 mt-3">
-                                                        <div>
-                                                            <label htmlFor={`startDate-${exp.id}`} className="block text-gray-700 text-lg">Data de Início *</label>
-                                                            <input
-                                                                id={`startDate-${exp.id}`}
-                                                                type="date"
-                                                                value={exp.data_inicio}
-                                                                onChange={(e) => {
-                                                                    const novasExperiencias = experiencias.map((item) =>
-                                                                        item.id === exp.id ? { ...item, data_inicio: e.target.value } : item
-                                                                    );
-                                                                    setExperiencias(novasExperiencias);
-                                                                }}
-                                                                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label htmlFor={`endDate-${exp.id}`} className="block text-gray-700 text-lg">Data de Término *</label>
-                                                            <input
-                                                                id={`endDate-${exp.id}`}
-                                                                type="date"
-                                                                value={exp.data_fim}
-                                                                onChange={(e) => {
-                                                                    const novasExperiencias = experiencias.map((item) =>
-                                                                        item.id === exp.id ? { ...item, data_fim: e.target.value } : item
-                                                                    );
-                                                                    setExperiencias(novasExperiencias);
-                                                                }}
-                                                                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                            />
-                                                        </div>
+                                                    <div>
+                                                        <label htmlFor="role-0" className="block text-gray-700 text-lg">Cargo *</label>
+                                                        <input
+                                                            id="role-0"
+                                                            type="text"
+                                                            placeholder="Insira o cargo exercido"
+                                                            value={experiencia.cargo}
+                                                            onChange={(e) => {
+                                                                setExperiencia({ ...experiencia, cargo: e.target.value });
+                                                            }}
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        />
                                                     </div>
                                                 </div>
-                                            ))}
-                                            <div className="flex justify-end">
+
+                                                <div className="grid grid-cols-3 gap-4 mt-3 items-center">
+                                                    <div>
+                                                        <label htmlFor="startDate-0" className="block text-gray-700 text-lg">Data de Início *</label>
+                                                        <input
+                                                            id="startDate-0"
+                                                            type="date"
+                                                            value={experiencia.data_inicio}
+                                                            onChange={(e) => {
+                                                                setExperiencia({ ...experiencia, data_inicio: e.target.value });
+                                                            }}
+                                                            className="w-full px-4 py-3 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label htmlFor="endDate-0" className="block text-gray-700 text-lg">Data de Término *</label>
+                                                        <input
+                                                            id="endDate-0"
+                                                            type="date"
+                                                            value={experiencia.data_fim}
+                                                            onChange={(e) => {
+                                                                setExperiencia({ ...experiencia, data_fim: e.target.value });
+                                                            }}
+                                                            className="w-full px-4 py-3 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        />
+                                                    </div>
+                                                    {/* Botão de Excluir com Estilo Vermelho e Menor */}
+                                                    <div className="flex justify-end items-center">
+                                                        <button
+                                                            type="button"
+                                                            //onClick={() => excluirExperiencia(experiencia?.id)} // Passa o id da experiência
+                                                            className="w-auto bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-semibold transition hover:from-red-700 hover:to-red-600"
+                                                        >
+                                                            Excluir
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex justify-end space-x-4">
                                                 <button
-                                                    type="submit"
+                                                    type="button"
+                                                    onClick={salvarOuEditarExperiencia} // Apenas uma experiência para salvar/editar
                                                     className="mt-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-lg shadow-lg text-sm font-semibold transition hover:from-blue-700 hover:to-blue-500"
-                                                    style={{ fontFamily: "Roboto Flex, serif", fontWeight: 300 }}
                                                 >
-                                                    Salvar e continuar
+                                                    {experiencia?.id ? 'Salvar Alterações' : 'Salvar e Continuar'}
                                                 </button>
                                             </div>
                                         </form>
@@ -449,7 +613,7 @@ const Curriculo = () => {
                                 <div className="flex items-center">
                                     Formação
                                 </div>
-                                {formacoesCompletas() && (
+                                {formacaoCompleta() && (
                                     <div className="absolute left-[200px] top-1/2 transform -translate-y-1/2">
                                         <div className="bg-green-500 rounded-full p-1">
                                             <HiCheck className="text-white" size={15} />
@@ -465,108 +629,110 @@ const Curriculo = () => {
                                 className={`overflow-hidden ${expandedSection === 'formacao' ? 'max-h-[1000px]' : 'max-h-0'}`}
                             >
                                 {expandedSection === 'formacao' && (
-                                    <div className="p-4 border-t space-y-4">
+                                    <div className="p-4 border-t space-y-6">
                                         <form>
-                                            {formacoes.map((formacao) => (
-                                                <div key={formacao.id} className="space-y-4">
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        <div>
-                                                            <label htmlFor={`institution-${formacao.id}`} className="block text-gray-700 text-lg">Instituição *</label>
-                                                            <input
-                                                                id={`institution-${formacao.id}`}
-                                                                type="text"
-                                                                placeholder='Insira o nome da instituição'
-                                                                value={formacao.instituicao}
-                                                                onChange={(e) => {
-                                                                    const novasFormacoes = formacoes.map((item) =>
-                                                                        item.id === formacao.id ? { ...item, instituicao: e.target.value } : item
-                                                                    );
-                                                                    setFormacoes(novasFormacoes);
-                                                                }}
-                                                                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label htmlFor={`course-${formacao.id}`} className="block text-gray-700 text-lg">Curso *</label>
-                                                            <input
-                                                                id={`course-${formacao.id}`}
-                                                                type="text"
-                                                                placeholder='Insira o nome do curso'
-                                                                value={formacao.curso}
-                                                                onChange={(e) => {
-                                                                    const novasFormacoes = formacoes.map((item) =>
-                                                                        item.id === formacao.id ? { ...item, curso: e.target.value } : item
-                                                                    );
-                                                                    setFormacoes(novasFormacoes);
-                                                                }}
-                                                                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                            />
-                                                        </div>
+                                            {/* Apenas uma formação, sem map */}
+                                            <div className="space-y-4 border p-4 rounded-lg mb-4">
+                                                {/* Título Dinâmico */}
+                                                <h2 className="text-xl font-bold text-gray-800">
+                                                    {formacao.instituicao || 'Formação'}
+                                                </h2>
+
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label htmlFor="institution-0" className="block text-gray-700 text-lg">Instituição *</label>
+                                                        <input
+                                                            id="institution-0"
+                                                            type="text"
+                                                            placeholder="Insira o nome da instituição"
+                                                            value={formacao.instituicao}
+                                                            onChange={(e) => {
+                                                                setFormacao({ ...formacao, instituicao: e.target.value });
+                                                            }}
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        />
                                                     </div>
-                                                    <div className="grid grid-cols-2 gap-4 mt-3">
-                                                        <div>
-                                                            <label htmlFor={`level-${formacao.id}`} className="block text-gray-700 text-lg">Nível de Formação *</label>
-                                                            <select
-                                                                id={`level-${formacao.id}`}
-                                                                value={formacao.nivel}
-                                                                onChange={(e) => {
-                                                                    const novasFormacoes = formacoes.map((item) =>
-                                                                        item.id === formacao.id ? { ...item, nivel: e.target.value } : item
-                                                                    );
-                                                                    setFormacoes(novasFormacoes);
-                                                                }}
-                                                                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                            >
-                                                                <option value="">Selecione</option>
-                                                                <option value="graduacao">Graduação</option>
-                                                                <option value="tecnologo">Tecnólogo</option>
-                                                                <option value="pos_graduacao">Pós-graduação</option>
-                                                                <option value="mestrado">Mestrado</option>
-                                                                <option value="doutorado">Doutorado</option>
-                                                            </select>
-                                                        </div>
-                                                        <div>
-                                                            <label htmlFor={`startDate-${formacao.id}`} className="block text-gray-700 text-lg">Data de Início *</label>
-                                                            <input
-                                                                id={`startDate-${formacao.id}`}
-                                                                type="date"
-                                                                value={formacao.data_inicio}
-                                                                onChange={(e) => {
-                                                                    const novasFormacoes = formacoes.map((item) =>
-                                                                        item.id === formacao.id ? { ...item, data_inicio: e.target.value } : item
-                                                                    );
-                                                                    setFormacoes(novasFormacoes);
-                                                                }}
-                                                                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="grid grid-cols-2 gap-4 mt-3">
-                                                        <div>
-                                                            <label htmlFor={`endDate-${formacao.id}`} className="block text-gray-700 text-lg">Data de Término *</label>
-                                                            <input
-                                                                id={`endDate-${formacao.id}`}
-                                                                type="date"
-                                                                value={formacao.data_conclusao}
-                                                                onChange={(e) => {
-                                                                    const novasFormacoes = formacoes.map((item) =>
-                                                                        item.id === formacao.id ? { ...item, data_conclusao: e.target.value } : item
-                                                                    );
-                                                                    setFormacoes(novasFormacoes);
-                                                                }}
-                                                                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                            />
-                                                        </div>
+                                                    <div>
+                                                        <label htmlFor="course-0" className="block text-gray-700 text-lg">Curso *</label>
+                                                        <input
+                                                            id="course-0"
+                                                            type="text"
+                                                            placeholder="Insira o nome do curso"
+                                                            value={formacao.curso}
+                                                            onChange={(e) => {
+                                                                setFormacao({ ...formacao, curso: e.target.value });
+                                                            }}
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        />
                                                     </div>
                                                 </div>
-                                            ))}
-                                            <div className="flex justify-end">
+
+                                                <div className="grid grid-cols-2 gap-4 mt-3">
+                                                    <div>
+                                                        <label htmlFor="level-0" className="block text-gray-700 text-lg">Nível de Formação *</label>
+                                                        <select
+                                                            id="level-0"
+                                                            value={formacao.nivel}
+                                                            onChange={(e) => {
+                                                                setFormacao({ ...formacao, nivel: e.target.value });
+                                                            }}
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        >
+                                                            <option value="">Selecione</option>
+                                                            <option value="graduacao">Graduação</option>
+                                                            <option value="tecnologo">Tecnólogo</option>
+                                                            <option value="pos_graduacao">Pós-graduação</option>
+                                                            <option value="mestrado">Mestrado</option>
+                                                            <option value="doutorado">Doutorado</option>
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <label htmlFor="startDate-0" className="block text-gray-700 text-lg">Data de Início *</label>
+                                                        <input
+                                                            id="startDate-0"
+                                                            type="date"
+                                                            value={formacao.data_inicio}
+                                                            onChange={(e) => {
+                                                                setFormacao({ ...formacao, data_inicio: e.target.value });
+                                                            }}
+                                                            className="w-full px-4 py-3 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-4 mt-3">
+                                                    <div>
+                                                        <label htmlFor="endDate-0" className="block text-gray-700 text-lg">Data de Término *</label>
+                                                        <input
+                                                            id="endDate-0"
+                                                            type="date"
+                                                            value={formacao.data_conclusao}
+                                                            onChange={(e) => {
+                                                                setFormacao({ ...formacao, data_conclusao: e.target.value });
+                                                            }}
+                                                            className="w-full px-4 py-3 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        />
+                                                    </div>
+                                                    {/* Botão de Excluir com Estilo Vermelho e Menor */}
+                                                    <div className="flex justify-end items-center">
+                                                        <button
+                                                            type="button"
+                                                            //onClick={() => excluirFormacao(formacao?.id)} // Passa o id da formação
+                                                            className="w-auto bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-semibold transition hover:from-red-700 hover:to-red-600"
+                                                        >
+                                                            Excluir
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex justify-end space-x-4">
                                                 <button
-                                                    type="submit"
+                                                    type="button"
+                                                    onClick={salvarOuEditarFormacao} // Apenas uma formação para salvar/editar
                                                     className="mt-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-lg shadow-lg text-sm font-semibold transition hover:from-blue-700 hover:to-blue-500"
-                                                    style={{ fontFamily: "Roboto Flex, serif", fontWeight: 300 }}
                                                 >
-                                                    Salvar e continuar
+                                                    {formacao?.id ? 'Salvar Alterações' : 'Salvar e Continuar'}
                                                 </button>
                                             </div>
                                         </form>
