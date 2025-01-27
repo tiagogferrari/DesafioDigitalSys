@@ -8,6 +8,7 @@ const Auth = ({ setShowPopup }) => {
         username: '',
         password: '',
         email: '',
+        confirmPassword: '',
     });
     const [message, setMessage] = useState(null);
 
@@ -18,11 +19,18 @@ const Auth = ({ setShowPopup }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Validação simples no frontend
+        if (isRegister && formData.password !== formData.confirmPassword) {
+            setMessage('As senhas não coincidem.');
+            return;
+        }
+
         const url = isRegister
             ? 'http://127.0.0.1:8000/api/register/'
             : 'http://127.0.0.1:8000/api/login/';
         const body = isRegister
-            ? { username: formData.username, password: formData.password, email: formData.email }
+            ? { username: formData.username, password: formData.password, email: formData.email, confirm_password:formData.confirmPassword }
             : { username: formData.username, password: formData.password };
 
         try {
@@ -41,6 +49,8 @@ const Auth = ({ setShowPopup }) => {
                 } else {
                     window.location.href = '/curriculo'; // Exemplo de rota para usuário normal
                 }
+            } else {
+                setMessage('Usuário registrado com sucesso! Faça seu login'); // Mensagem de sucesso no registro
             }
         } catch (error) {
             if (error.response) {
@@ -49,7 +59,6 @@ const Auth = ({ setShowPopup }) => {
                 setMessage('Erro de conexão com o servidor.');
             }
         }
-
     };
 
     const toggleAuthMode = (mode) => {
@@ -58,6 +67,7 @@ const Auth = ({ setShowPopup }) => {
             username: '',
             password: '',
             email: '',
+            confirmPassword: ''
         });
         setMessage(null);
     };
@@ -65,7 +75,6 @@ const Auth = ({ setShowPopup }) => {
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
             <div className="bg-white p-10 rounded-lg shadow-xl w-full max-w-md relative">
-                {/* Título e Botão Fechar */}
                 <div className="flex justify-center items-center mb-8">
                     <h2 className="text-2xl font-bold text-blue-500 flex-1 text-center" style={{ fontFamily: "Roboto Flex, serif", fontWeight: 800 }}>
                         {isRegister ? 'Registro' : 'Login'}
@@ -135,6 +144,22 @@ const Auth = ({ setShowPopup }) => {
                         />
                     </div>
 
+                    {isRegister && (
+                        <div>
+                            <label htmlFor="confirmPassword" className="block text-gray-700 font-medium mb-2">
+                                Confirmar Senha
+                            </label>
+                            <input
+                                type="password"
+                                name="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+                                placeholder="Confirme sua senha"
+                                required
+                            />
+                        </div>
+                    )}
                     <button
                         type="submit"
                         className="w-full bg-blue-500 text-white py-3 rounded-lg font-bold shadow-lg hover:bg-blue-600 transition-all duration-200"
@@ -142,7 +167,6 @@ const Auth = ({ setShowPopup }) => {
                         {isRegister ? 'Registrar' : 'Entrar'}
                     </button>
                 </form>
-
                 <p className="mt-6 text-center text-gray-600">
                     {isRegister ? (
                         <>

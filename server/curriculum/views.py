@@ -1,12 +1,11 @@
 from rest_framework import viewsets
 from .models import Curriculum, Contato, Experiencia, Formacao
-from .serializers import CurriculumSerializer, ContatoSerializer, ExperienciaSerializer, FormacaoSerializer
+from .serializers import CurriculumSerializer, ContatoSerializer, ExperienciaSerializer, FormacaoSerializer, RegisterSerializer
 from django.contrib.auth.models import User
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import serializers
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 
@@ -79,18 +78,6 @@ class FormacaoViewSet(viewsets.ModelViewSet):
         user = self.request.user
         curriculum = Curriculum.objects.get(user=user)  # Obter o currículo do usuário
         serializer.save(curriculum=curriculum)  # Associar a formação ao currículo
-
-# Serializer para o Registro do Usuário
-class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ['username', 'password', 'email']
-
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
 
 # View para o registro de usuários
 class RegisterView(APIView):
