@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -141,3 +142,30 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Tempo de expiração do access token
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Tempo de expiração do refresh token
+    'ROTATE_REFRESH_TOKENS': False,                  # Gera um novo refresh token a cada login
+    'BLACKLIST_AFTER_ROTATION': True,                # Invalida os refresh tokens antigos
+    'UPDATE_LAST_LOGIN': False,                      # Atualiza o campo last_login do usuário
+
+    'ALGORITHM': 'HS256',                            # Algoritmo de criptografia
+    'SIGNING_KEY': SECRET_KEY,                       # Chave secreta do Django
+    'VERIFYING_KEY': None,                           # Chave pública para verificação (usada em algoritmos assimétricos)
+    'AUDIENCE': None,
+    'ISSUER': None,
+
+    'AUTH_HEADER_TYPES': ('Bearer',),                # Tipo do header de autenticação
+    'USER_ID_FIELD': 'id',                           # Campo usado como identificador do usuário
+    'USER_ID_CLAIM': 'user_id',                      # Claim no token que armazena o ID do usuário
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+
+    'JTI_CLAIM': 'jti',                              # Identificador único do token
+
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}

@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import serializers
+from rest_framework.decorators import action
 
 class CurriculumViewSet(viewsets.ModelViewSet):
     queryset = Curriculum.objects.all()
@@ -15,6 +16,28 @@ class CurriculumViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)  # Associar o currículo ao usuário autenticado
+        
+    @action(detail=False, methods=['get'])
+    def meu_curriculo(self, request):
+        try:
+            # Busca o currículo do usuário logado
+            curriculum = Curriculum.objects.get(user=request.user)
+            
+            # Serializa os dados do currículo e dos relacionamentos
+            curriculum_data = CurriculumSerializer(curriculum).data
+            contatos = ContatoSerializer(curriculum.contatos.all(), many=True).data
+            experiencias = ExperienciaSerializer(curriculum.experiencias.all(), many=True).data
+            formacoes = FormacaoSerializer(curriculum.formacoes.all(), many=True).data
+
+            # Retorna todos os dados em uma única resposta
+            return Response({
+                'curriculum': curriculum_data,
+                'contatos': contatos,
+                'experiencias': experiencias,
+                'formacoes': formacoes,
+            })
+        except Curriculum.DoesNotExist:
+            return Response({"detail": "Currículo não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
 class ContatoViewSet(viewsets.ModelViewSet):
     queryset = Contato.objects.all()
