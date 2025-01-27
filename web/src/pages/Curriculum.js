@@ -153,7 +153,6 @@ const Curriculo = () => {
         buscarCurriculoUsuario();
     }, []);
 
-    //Funções de salvamento/edição
     const salvarOuEditarDadosPessoais = async () => {
         const token = localStorage.getItem('token');
 
@@ -182,27 +181,204 @@ const Curriculo = () => {
                     }
                 );
             }
+
             Swal.fire({
                 icon: 'success',
                 title: 'Dados pessoais salvos/atualizados com sucesso!',
-                showConfirmButton: false, // Remove o botão de confirmação
-                timer: 800, // Alerta desaparece após 2 segundos
-                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+                showConfirmButton: false,
+                timer: 800,
+                timerProgressBar: false,
             });
 
             setDadosPessoais(response.data);
         } catch (error) {
             console.log("Dados sendo enviados:", dadosPessoais);
-            Swal.fire({
-                icon: 'error',
-                title: 'Erro ao salvar/editar dados pessoais.',
-                text: 'Verifique o console para mais detalhes.',
-                showConfirmButton: false, // Remove o botão de confirmação
-                timer: 800, // Alerta desaparece após 3 segundos
-                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
-            });
+
+            if (error.response && error.response.status === 400) {
+                // Erro de validação (campo obrigatório ou inválido)
+                const erros = error.response.data; // Erros de validação do backend
+                let mensagemErro = 'Verifique os seguintes erros: ';
+
+                // Concatena as mensagens de erro
+                // biome-ignore lint/complexity/noForEach: <explanation>
+                Object.keys(erros).forEach((campo) => {
+                    mensagemErro += `\n${campo}: ${erros[campo].join(', ')}`;
+                });
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao salvar/editar dados pessoais.',
+                    text: mensagemErro,
+                    showConfirmButton: true, // Exibe o botão de confirmação
+                });
+            } else {
+                // Erro genérico
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao salvar/editar dados pessoais.',
+                    text: 'Verifique o console para mais detalhes.',
+                    showConfirmButton: false,
+                    timer: 800,
+                    timerProgressBar: false,
+                });
+            }
         }
     };
+
+    /*
+        const salvarOuEditarContato = async () => {
+            const token = localStorage.getItem('token');
+    
+            try {
+                let response;
+                if (contato.id) {
+                    // Atualiza o contato (PUT)
+                    response = await axios.put(
+                        `http://127.0.0.1:8000/api/contatos/${contato.id}/`,
+                        contato, // Envia apenas o contato
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+                } else {
+                    // Cria um novo contato (POST)
+                    response = await axios.post(
+                        'http://127.0.0.1:8000/api/contatos/',
+                        contato, // Envia apenas o contato
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+                }
+    
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Dados de contato salvos/atualizados com sucesso!',
+                    showConfirmButton: false, // Remove o botão de confirmação
+                    timer: 800, // Alerta desaparece após 2 segundos
+                    timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+                });
+    
+                // Atualiza o estado com os novos dados
+                setContato(response.data);
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao salvar/editar dados de contato.',
+                    text: 'Verifique o console para mais detalhes.',
+                    showConfirmButton: false, // Remove o botão de confirmação
+                    timer: 800, // Alerta desaparece após 3 segundos
+                    timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+                });
+            }
+        };
+    
+        const salvarOuEditarExperiencia = async () => {
+            const token = localStorage.getItem('token');
+    
+            try {
+                let response;
+                if (experiencia.id) {
+                    // Atualiza a experiência existente (PUT)
+                    response = await axios.put(
+                        `http://127.0.0.1:8000/api/experiencias/${experiencia.id}/`,
+                        experiencia, // Envia apenas a experiência
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+                } else {
+                    // Cria uma nova experiência (POST)
+                    response = await axios.post(
+                        'http://127.0.0.1:8000/api/experiencias/',
+                        experiencia, // Envia apenas a experiência
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+                }
+    
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Dados de experiência salvos/atualizados com sucesso!',
+                    showConfirmButton: false, // Remove o botão de confirmação
+                    timer: 800, // Alerta desaparece após 2 segundos
+                    timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+                });
+    
+                // Atualiza o estado com os dados da nova experiência
+                setExperiencia(response.data);
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao salvar/editar dados de experiência.',
+                    text: 'Verifique o console para mais detalhes.',
+                    showConfirmButton: false, // Remove o botão de confirmação
+                    timer: 800, // Alerta desaparece após 3 segundos
+                    timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+                });
+            }
+        };
+    
+        const salvarOuEditarFormacao = async () => {
+            const token = localStorage.getItem('token');
+    
+            try {
+                let response;
+                if (formacao.id) {
+                    // Atualiza a formação existente (PUT)
+                    response = await axios.put(
+                        `http://127.0.0.1:8000/api/formacoes/${formacao.id}/`,
+                        formacao, // Envia a formação inteira
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+                } else {
+                    // Cria uma nova formação (POST)
+                    response = await axios.post(
+                        'http://127.0.0.1:8000/api/formacoes/',
+                        formacao, // Envia a formação inteira
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+                }
+    
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Dados de formação salvos/atualizados com sucesso!',
+                    showConfirmButton: false, // Remove o botão de confirmação
+                    timer: 800, // Alerta desaparece após 2 segundos
+                    timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+                });
+    
+                // Atualiza o estado com os dados da nova formação
+                setFormacao(response.data);
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao salvar/editar dados da formação.',
+                    text: 'Verifique o console para mais detalhes.',
+                    showConfirmButton: false, // Remove o botão de confirmação
+                    timer: 800, // Alerta desaparece após 3 segundos
+                    timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+                });
+            }
+        };
+    */
 
     const salvarOuEditarContato = async () => {
         const token = localStorage.getItem('token');
@@ -213,7 +389,7 @@ const Curriculo = () => {
                 // Atualiza o contato (PUT)
                 response = await axios.put(
                     `http://127.0.0.1:8000/api/contatos/${contato.id}/`,
-                    contato, // Envia apenas o contato
+                    contato,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -224,7 +400,7 @@ const Curriculo = () => {
                 // Cria um novo contato (POST)
                 response = await axios.post(
                     'http://127.0.0.1:8000/api/contatos/',
-                    contato, // Envia apenas o contato
+                    contato,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -236,22 +412,38 @@ const Curriculo = () => {
             Swal.fire({
                 icon: 'success',
                 title: 'Dados de contato salvos/atualizados com sucesso!',
-                showConfirmButton: false, // Remove o botão de confirmação
-                timer: 800, // Alerta desaparece após 2 segundos
-                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+                showConfirmButton: false,
+                timer: 800,
+                timerProgressBar: false,
             });
 
-            // Atualiza o estado com os novos dados
             setContato(response.data);
         } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Erro ao salvar/editar dados de contato.',
-                text: 'Verifique o console para mais detalhes.',
-                showConfirmButton: false, // Remove o botão de confirmação
-                timer: 800, // Alerta desaparece após 3 segundos
-                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
-            });
+            if (error.response && error.response.status === 400) {
+                const erros = error.response.data;
+                let mensagemErro = 'Verifique os seguintes erros: ';
+
+                // biome-ignore lint/complexity/noForEach: <explanation>
+                Object.keys(erros).forEach((campo) => {
+                    mensagemErro += `\n${campo}: ${erros[campo].join(', ')}`;
+                });
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao salvar/editar dados de contato.',
+                    text: mensagemErro,
+                    showConfirmButton: true,
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao salvar/editar dados de contato.',
+                    text: 'Verifique o console para mais detalhes.',
+                    showConfirmButton: false,
+                    timer: 800,
+                    timerProgressBar: false,
+                });
+            }
         }
     };
 
@@ -261,10 +453,9 @@ const Curriculo = () => {
         try {
             let response;
             if (experiencia.id) {
-                // Atualiza a experiência existente (PUT)
                 response = await axios.put(
                     `http://127.0.0.1:8000/api/experiencias/${experiencia.id}/`,
-                    experiencia, // Envia apenas a experiência
+                    experiencia,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -272,10 +463,9 @@ const Curriculo = () => {
                     }
                 );
             } else {
-                // Cria uma nova experiência (POST)
                 response = await axios.post(
                     'http://127.0.0.1:8000/api/experiencias/',
-                    experiencia, // Envia apenas a experiência
+                    experiencia,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -287,22 +477,38 @@ const Curriculo = () => {
             Swal.fire({
                 icon: 'success',
                 title: 'Dados de experiência salvos/atualizados com sucesso!',
-                showConfirmButton: false, // Remove o botão de confirmação
-                timer: 800, // Alerta desaparece após 2 segundos
-                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+                showConfirmButton: false,
+                timer: 800,
+                timerProgressBar: false,
             });
 
-            // Atualiza o estado com os dados da nova experiência
             setExperiencia(response.data);
         } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Erro ao salvar/editar dados de experiência.',
-                text: 'Verifique o console para mais detalhes.',
-                showConfirmButton: false, // Remove o botão de confirmação
-                timer: 800, // Alerta desaparece após 3 segundos
-                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
-            });
+            if (error.response && error.response.status === 400) {
+                const erros = error.response.data;
+                let mensagemErro = 'Verifique os seguintes erros: ';
+
+                // biome-ignore lint/complexity/noForEach: <explanation>
+                Object.keys(erros).forEach((campo) => {
+                    mensagemErro += `\n${campo}: ${erros[campo].join(', ')}`;
+                });
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao salvar/editar dados de experiência.',
+                    text: mensagemErro,
+                    showConfirmButton: true,
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao salvar/editar dados de experiência.',
+                    text: 'Verifique o console para mais detalhes.',
+                    showConfirmButton: false,
+                    timer: 800,
+                    timerProgressBar: false,
+                });
+            }
         }
     };
 
@@ -312,10 +518,9 @@ const Curriculo = () => {
         try {
             let response;
             if (formacao.id) {
-                // Atualiza a formação existente (PUT)
                 response = await axios.put(
                     `http://127.0.0.1:8000/api/formacoes/${formacao.id}/`,
-                    formacao, // Envia a formação inteira
+                    formacao,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -323,10 +528,9 @@ const Curriculo = () => {
                     }
                 );
             } else {
-                // Cria uma nova formação (POST)
                 response = await axios.post(
                     'http://127.0.0.1:8000/api/formacoes/',
-                    formacao, // Envia a formação inteira
+                    formacao,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -338,22 +542,38 @@ const Curriculo = () => {
             Swal.fire({
                 icon: 'success',
                 title: 'Dados de formação salvos/atualizados com sucesso!',
-                showConfirmButton: false, // Remove o botão de confirmação
-                timer: 800, // Alerta desaparece após 2 segundos
-                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+                showConfirmButton: false,
+                timer: 800,
+                timerProgressBar: false,
             });
 
-            // Atualiza o estado com os dados da nova formação
             setFormacao(response.data);
         } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Erro ao salvar/editar dados da formação.',
-                text: 'Verifique o console para mais detalhes.',
-                showConfirmButton: false, // Remove o botão de confirmação
-                timer: 800, // Alerta desaparece após 3 segundos
-                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
-            });
+            if (error.response && error.response.status === 400) {
+                const erros = error.response.data;
+                let mensagemErro = 'Verifique os seguintes erros: ';
+
+                // biome-ignore lint/complexity/noForEach: <explanation>
+                Object.keys(erros).forEach((campo) => {
+                    mensagemErro += `\n${campo}: ${erros[campo].join(', ')}`;
+                });
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao salvar/editar dados da formação.',
+                    text: mensagemErro,
+                    showConfirmButton: true,
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao salvar/editar dados da formação.',
+                    text: 'Verifique o console para mais detalhes.',
+                    showConfirmButton: false,
+                    timer: 800,
+                    timerProgressBar: false,
+                });
+            }
         }
     };
 

@@ -40,3 +40,6 @@ class Formacao(models.Model):
 
     def __str__(self):
         return self.curso
+    
+    class Meta:
+        verbose_name_plural = "Formacoes"
