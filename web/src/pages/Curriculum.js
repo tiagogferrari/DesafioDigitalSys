@@ -333,61 +333,72 @@ const Curriculo = () => {
                                 {expandedSection === 'personalInfo' && (
                                     <div className="p-4 border-t space-y-4">
                                         <form>
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <label htmlFor="fullName" className="block text-gray-700 text-lg">Nome completo *</label>
-                                                    <input
-                                                        id="fullName"
-                                                        type="text"
-                                                        placeholder='Insira seu nome completo'
-                                                        value={dadosPessoais.nome}
-                                                        onChange={(e) => setDadosPessoais({ ...dadosPessoais, nome: e.target.value })}
-                                                        className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                    />
+                                            <div className="space-y-4 border p-4 rounded-lg mb-4">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label htmlFor="fullName" className="block text-gray-700 text-lg">Nome completo *</label>
+                                                        <input
+                                                            id="fullName"
+                                                            type="text"
+                                                            placeholder='Insira seu nome completo'
+                                                            value={dadosPessoais.nome}
+                                                            onChange={(e) => setDadosPessoais({ ...dadosPessoais, nome: e.target.value })}
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label htmlFor="dob" className="block text-gray-700 text-lg">Data de nascimento *</label>
+                                                        <input
+                                                            id="dob"
+                                                            type="date"
+                                                            value={dadosPessoais.data_nascimento}
+                                                            onChange={(e) => setDadosPessoais({ ...dadosPessoais, data_nascimento: e.target.value })}
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        />
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <label htmlFor="dob" className="block text-gray-700 text-lg">Data de nascimento *</label>
-                                                    <input
-                                                        id="dob"
-                                                        type="date"
-                                                        value={dadosPessoais.data_nascimento}
-                                                        onChange={(e) => setDadosPessoais({ ...dadosPessoais, data_nascimento: e.target.value })}
-                                                        className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-4 mt-3">
-                                                <div>
-                                                    <label htmlFor="gender" className="block text-gray-700 text-lg">Gênero *</label>
-                                                    <select
-                                                        id="gender"
-                                                        value={dadosPessoais.genero}
-                                                        onChange={(e) => setDadosPessoais({ ...dadosPessoais, genero: e.target.value })}
-                                                        className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                    >
-                                                        <option value="">Selecione</option>
-                                                        <option value="Masculino">Masculino</option>
-                                                        <option value="Feminino">Feminino</option>
-                                                        <option value="Outro">Outro</option>
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label htmlFor="nationality" className="block text-gray-700 text-lg">Nacionalidade *</label>
-                                                    <select
-                                                        id="nationality"
-                                                        value={dadosPessoais.nacionalidade} // Vinculado ao estado
-                                                        onChange={(e) => setDadosPessoais({ ...dadosPessoais, nacionalidade: e.target.value })} // Atualiza o estado
-                                                        className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                    >
-                                                        <option value="">Selecione</option>
-                                                        <option value="Brasil">Brasil</option>
-                                                        <option value="Estados Unidos">Estados Unidos</option>
-                                                        <option value="Argentina">Argentina</option>
-                                                        <option value="Portugal">Portugal</option>
-                                                        <option value="França">França</option>
-                                                        <option value="Alemanha">Alemanha</option>
-                                                        <option value="Outra">Outra</option>
-                                                    </select>
+                                                <div className="grid grid-cols-3 gap-4 mt-3">
+                                                    <div>
+                                                        <label htmlFor="gender" className="block text-gray-700 text-lg">Gênero *</label>
+                                                        <select
+                                                            id="gender"
+                                                            value={dadosPessoais.genero}
+                                                            onChange={(e) => setDadosPessoais({ ...dadosPessoais, genero: e.target.value })}
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        >
+                                                            <option value="">Selecione</option>
+                                                            <option value="Masculino">Masculino</option>
+                                                            <option value="Feminino">Feminino</option>
+                                                            <option value="Outro">Outro</option>
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <label htmlFor="nationality" className="block text-gray-700 text-lg">Nacionalidade *</label>
+                                                        <select
+                                                            id="nationality"
+                                                            value={dadosPessoais.nacionalidade} // Vinculado ao estado
+                                                            onChange={(e) => setDadosPessoais({ ...dadosPessoais, nacionalidade: e.target.value })} // Atualiza o estado
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        >
+                                                            <option value="">Selecione</option>
+                                                            <option value="Brasil">Brasil</option>
+                                                            <option value="Estados Unidos">Estados Unidos</option>
+                                                            <option value="Argentina">Argentina</option>
+                                                            <option value="Portugal">Portugal</option>
+                                                            <option value="França">França</option>
+                                                            <option value="Alemanha">Alemanha</option>
+                                                            <option value="Outra">Outra</option>
+                                                        </select>
+                                                    </div>
+                                                    <div className="flex justify-end items-center">
+                                                        <button
+                                                            type="button"
+                                                            //onClick={() => excluirExperiencia(experiencia?.id)} // Passa o id da experiência
+                                                            className="w-32 h-10 bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 mt-6 rounded-lg shadow-lg text-md font-semibold transition hover:from-red-700 hover:to-red-600"
+                                                        >
+                                                            Excluir
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div className="flex justify-end">
@@ -434,40 +445,51 @@ const Curriculo = () => {
                                 {expandedSection === 'contact' && (
                                     <div className="p-4 border-t space-y-4">
                                         <form>
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <label htmlFor="email" className="block text-gray-700 text-lg">E-mail *</label>
-                                                    <input
-                                                        id="email"
-                                                        type="email"
-                                                        placeholder='Insira o seu melhor e-mail'
-                                                        value={contato.email}
-                                                        onChange={(e) => setContato({ ...contato, email: e.target.value })}
-                                                        className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                    />
+                                            <div className="space-y-4 border p-4 rounded-lg mb-4">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label htmlFor="email" className="block text-gray-700 text-lg">E-mail *</label>
+                                                        <input
+                                                            id="email"
+                                                            type="email"
+                                                            placeholder='Insira o seu melhor e-mail'
+                                                            value={contato.email}
+                                                            onChange={(e) => setContato({ ...contato, email: e.target.value })}
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label htmlFor="phone" className="block text-gray-700 text-lg">Telefone *</label>
+                                                        <input
+                                                            id="phone"
+                                                            type="tel"
+                                                            value={contato.telefone}
+                                                            onChange={(e) => setContato({ ...contato, telefone: e.target.value })}
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        />
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <label htmlFor="phone" className="block text-gray-700 text-lg">Telefone *</label>
-                                                    <input
-                                                        id="phone"
-                                                        type="tel"
-                                                        value={contato.telefone}
-                                                        onChange={(e) => setContato({ ...contato, telefone: e.target.value })}
-                                                        className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="grid grid-cols-1 mt-3">
-                                                <div>
-                                                    <label htmlFor="address" className="block text-gray-700 text-lg">Endereço completo *</label>
-                                                    <input
-                                                        id="address"
-                                                        type="text"
-                                                        placeholder='Insira seu endereço completo'
-                                                        value={contato.endereco}
-                                                        onChange={(e) => setContato({ ...contato, endereco: e.target.value })}
-                                                        className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
-                                                    />
+                                                <div className="grid grid-cols-2 mt-3">
+                                                    <div>
+                                                        <label htmlFor="address" className="block text-gray-700 text-lg">Endereço completo *</label>
+                                                        <input
+                                                            id="address"
+                                                            type="text"
+                                                            placeholder='Insira seu endereço completo'
+                                                            value={contato.endereco}
+                                                            onChange={(e) => setContato({ ...contato, endereco: e.target.value })}
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                        />
+                                                    </div>
+                                                    <div className="flex justify-end items-center">
+                                                        <button
+                                                            type="button"
+                                                            //onClick={() => excluirExperiencia(experiencia?.id)} // Passa o id da experiência
+                                                            className="w-32 h-10 bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 mt-6 rounded-lg shadow-lg text-md font-semibold transition hover:from-red-700 hover:to-red-600"
+                                                        >
+                                                            Excluir
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div className="flex justify-end">
@@ -549,7 +571,6 @@ const Curriculo = () => {
                                                         />
                                                     </div>
                                                 </div>
-
                                                 <div className="grid grid-cols-3 gap-4 mt-3 items-center">
                                                     <div>
                                                         <label htmlFor="startDate-0" className="block text-gray-700 text-lg">Data de Início *</label>
@@ -560,7 +581,7 @@ const Curriculo = () => {
                                                             onChange={(e) => {
                                                                 setExperiencia({ ...experiencia, data_inicio: e.target.value });
                                                             }}
-                                                            className="w-full px-4 py-3 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
                                                         />
                                                     </div>
                                                     <div>
@@ -572,7 +593,7 @@ const Curriculo = () => {
                                                             onChange={(e) => {
                                                                 setExperiencia({ ...experiencia, data_fim: e.target.value });
                                                             }}
-                                                            className="w-full px-4 py-3 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
                                                         />
                                                     </div>
                                                     {/* Botão de Excluir com Estilo Vermelho e Menor */}
@@ -580,14 +601,13 @@ const Curriculo = () => {
                                                         <button
                                                             type="button"
                                                             //onClick={() => excluirExperiencia(experiencia?.id)} // Passa o id da experiência
-                                                            className="w-auto bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-semibold transition hover:from-red-700 hover:to-red-600"
+                                                            className="w-32 h-10 bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 mt-6 rounded-lg shadow-lg text-md font-semibold transition hover:from-red-700 hover:to-red-600"
                                                         >
                                                             Excluir
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div className="flex justify-end space-x-4">
                                                 <button
                                                     type="button"
@@ -695,7 +715,7 @@ const Curriculo = () => {
                                                             onChange={(e) => {
                                                                 setFormacao({ ...formacao, data_inicio: e.target.value });
                                                             }}
-                                                            className="w-full px-4 py-3 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
                                                         />
                                                     </div>
                                                 </div>
@@ -710,15 +730,15 @@ const Curriculo = () => {
                                                             onChange={(e) => {
                                                                 setFormacao({ ...formacao, data_conclusao: e.target.value });
                                                             }}
-                                                            className="w-full px-4 py-3 border rounded-lg focus:ring-blue-500 focus:outline-none"
+                                                            className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none"
                                                         />
                                                     </div>
                                                     {/* Botão de Excluir com Estilo Vermelho e Menor */}
                                                     <div className="flex justify-end items-center">
                                                         <button
                                                             type="button"
-                                                            //onClick={() => excluirFormacao(formacao?.id)} // Passa o id da formação
-                                                            className="w-auto bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-semibold transition hover:from-red-700 hover:to-red-600"
+                                                            //onClick={() => excluirExperiencia(experiencia?.id)} // Passa o id da experiência
+                                                            className="w-32 h-10 bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 mt-6 rounded-lg shadow-lg text-md font-semibold transition hover:from-red-700 hover:to-red-600"
                                                         >
                                                             Excluir
                                                         </button>
