@@ -16,5 +16,9 @@ COPY . .
 # Expõe a porta
 EXPOSE 3000
 
+# Configura o hot reload para o ambiente Docker
+ENV CHOKIDAR_USEPOLLING=true
+ENV CHOKIDAR_INTERVAL=100
+
 # Inicia o servidor
 CMD ["npm", "start"]

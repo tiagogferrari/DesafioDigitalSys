@@ -17,10 +17,8 @@ services:
     build:
       context: ./web
     volumes:
-      - type: bind
-        source: ./web
-        target: /app
-      - /app/node_modules # Separa node_modules para evitar conflitos
+      - ./web:/app
+      - /app/node_modules # Evita conflitos de node_modules
     ports:
       - "3000:3000"
     environment:
