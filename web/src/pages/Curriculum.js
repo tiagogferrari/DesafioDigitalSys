@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { HiChevronDown, HiCheck } from 'react-icons/hi';
 import axios from 'axios';
+import Swal from 'sweetalert2'
 
 const Curriculo = () => {
     const [expandedSection, setExpandedSection] = useState(null);
@@ -67,59 +68,92 @@ const Curriculo = () => {
         setExpandedSection((prev) => (prev === section ? null : section));
     };
 
-    const buscarCurriculoUsuario = useCallback(async () => {
-        try {
-            const token = localStorage.getItem('token'); // Recupera o token do localStorage
-            if (!token) {
-                console.error('Token não encontrado');
-                return;
+    const executadoRef = useRef(false); // Ref para rastrear se a função já foi executada
+
+    useEffect(() => {
+        const buscarCurriculoUsuario = async () => {
+            if (executadoRef.current) return; // Evita execuções repetidas
+            executadoRef.current = true; // Marca como executado
+
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.error('Token não encontrado');
+                    return;
+                }
+
+                const verificarResponse = await axios.get('http://127.0.0.1:8000/api/curriculums/verificar_curriculo/', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (verificarResponse.data.detail === "Você ainda não tem um currículo cadastrado.") {
+                    Swal.fire({
+                        title: '<h1 class="text-4xl font-bold" style="font-family: \'Playwrite IN\', serif; font-weight: 600; color: rgb(37, 99, 235);">Pegho</h1>',
+                        html: '<p style="font-size: 18px;">Parece que você ainda não tem um currículo cadastrado em nosso site. Pressione OK para cadastrar o seu currículo.</p>',
+                        icon: 'info',
+                        iconColor: 'rgb(37, 99, 235)',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: 'rgb(37, 99, 235)',
+                        customClass: {
+                            popup: 'swal-popup',
+                        },
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.close();
+                        }
+                    });
+                    return;
+                }
+
+                const response = await axios.get('http://127.0.0.1:8000/api/curriculums/meu_curriculo/', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (response.data) {
+                    setDadosPessoais(response.data.curriculum || {
+                        nome: '',
+                        data_nascimento: '',
+                        genero: '',
+                        nacionalidade: '',
+                    });
+
+                    setContato(response.data.contatos[0] || {
+                        email: '',
+                        telefone: '',
+                        endereco: '',
+                    });
+
+                    setExperiencia(response.data.experiencias[0] || {
+                        cargo: '',
+                        empresa: '',
+                        data_inicio: '',
+                        data_fim: '',
+                    });
+
+                    setFormacao(response.data.formacoes[0] || {
+                        curso: '',
+                        instituicao: '',
+                        nivel: '',
+                        data_inicio: '',
+                        data_conclusao: '',
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao buscar currículo:', error);
+                if (error.response) {
+                    console.error('Resposta do servidor:', error.response.data);
+                }
             }
+        };
 
-            const response = await axios.get('http://127.0.0.1:8000/api/curriculums/meu_curriculo/', {
-                headers: {
-                    Authorization: `Bearer ${token}`, // Passa o token no cabeçalho
-                },
-            });
-
-            if (response.data) {
-                // Verifique e defina valores padrão seguros para evitar null/undefined nos campos
-                setDadosPessoais(response.data.curriculum || {
-                    nome: '',
-                    data_nascimento: '',
-                    genero: '',
-                    nacionalidade: '',
-                });
-
-                setContato(response.data.contatos[0] || {
-                    email: '',
-                    telefone: '',
-                    endereco: '',
-                });
-
-                // Certifique-se de que o estado 'experiencia' tenha uma estrutura segura
-                setExperiencia(response.data.experiencias[0] || {
-                    cargo: '',
-                    empresa: '',
-                    data_inicio: '',
-                    data_fim: '',
-                });
-
-                setFormacao(response.data.formacoes[0] || {
-                    curso: '',
-                    instituicao: '',
-                    nivel: '',
-                    data_inicio: '',
-                    data_conclusao: '',
-                });
-            }
-        } catch (error) {
-            console.error('Erro ao buscar currículo:', error);
-            if (error.response) {
-                console.error('Resposta do servidor:', error.response.data);
-            }
-        }
+        buscarCurriculoUsuario();
     }, []);
 
+    //Funções de salvamento/edição
     const salvarOuEditarDadosPessoais = async () => {
         const token = localStorage.getItem('token');
 
@@ -148,15 +182,25 @@ const Curriculo = () => {
                     }
                 );
             }
+            Swal.fire({
+                icon: 'success',
+                title: 'Dados pessoais salvos/atualizados com sucesso!',
+                showConfirmButton: false, // Remove o botão de confirmação
+                timer: 800, // Alerta desaparece após 2 segundos
+                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+            });
 
-            console.log('Dados pessoais salvos/atualizados:', response.data);
-            alert('Dados pessoais salvos/atualizados com sucesso!');
-
-            // Atualiza o estado com os novos dados
             setDadosPessoais(response.data);
         } catch (error) {
-            console.error('Erro ao salvar/editar dados pessoais:', error);
-            alert('Erro ao salvar/editar dados pessoais. Verifique o console para mais detalhes.');
+            console.log("Dados sendo enviados:", dadosPessoais);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao salvar/editar dados pessoais.',
+                text: 'Verifique o console para mais detalhes.',
+                showConfirmButton: false, // Remove o botão de confirmação
+                timer: 800, // Alerta desaparece após 3 segundos
+                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+            });
         }
     };
 
@@ -189,14 +233,25 @@ const Curriculo = () => {
                 );
             }
 
-            console.log('Contato salvo/atualizado:', response.data);
-            alert('Contato salvo/atualizado com sucesso!');
+            Swal.fire({
+                icon: 'success',
+                title: 'Dados de contato salvos/atualizados com sucesso!',
+                showConfirmButton: false, // Remove o botão de confirmação
+                timer: 800, // Alerta desaparece após 2 segundos
+                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+            });
 
             // Atualiza o estado com os novos dados
             setContato(response.data);
         } catch (error) {
-            console.error('Erro ao salvar/editar contato:', error);
-            alert('Erro ao salvar/editar contato. Verifique o console para mais detalhes.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao salvar/editar dados de contato.',
+                text: 'Verifique o console para mais detalhes.',
+                showConfirmButton: false, // Remove o botão de confirmação
+                timer: 800, // Alerta desaparece após 3 segundos
+                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+            });
         }
     };
 
@@ -229,14 +284,25 @@ const Curriculo = () => {
                 );
             }
 
-            console.log('Experiência salva/atualizada:', response.data);
-            alert('Experiência salva/atualizada com sucesso!');
+            Swal.fire({
+                icon: 'success',
+                title: 'Dados de experiência salvos/atualizados com sucesso!',
+                showConfirmButton: false, // Remove o botão de confirmação
+                timer: 800, // Alerta desaparece após 2 segundos
+                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+            });
 
             // Atualiza o estado com os dados da nova experiência
             setExperiencia(response.data);
         } catch (error) {
-            console.error('Erro ao salvar/editar experiência:', error);
-            alert('Erro ao salvar/editar experiência. Verifique o console para mais detalhes.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao salvar/editar dados de experiência.',
+                text: 'Verifique o console para mais detalhes.',
+                showConfirmButton: false, // Remove o botão de confirmação
+                timer: 800, // Alerta desaparece após 3 segundos
+                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+            });
         }
     };
 
@@ -269,20 +335,232 @@ const Curriculo = () => {
                 );
             }
 
-            console.log('Formação salva/atualizada:', response.data);
-            alert('Formação salva/atualizada com sucesso!');
+            Swal.fire({
+                icon: 'success',
+                title: 'Dados de formação salvos/atualizados com sucesso!',
+                showConfirmButton: false, // Remove o botão de confirmação
+                timer: 800, // Alerta desaparece após 2 segundos
+                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+            });
 
             // Atualiza o estado com os dados da nova formação
             setFormacao(response.data);
         } catch (error) {
-            console.error('Erro ao salvar/editar formação:', error);
-            alert('Erro ao salvar/editar formação. Verifique o console para mais detalhes.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao salvar/editar dados da formação.',
+                text: 'Verifique o console para mais detalhes.',
+                showConfirmButton: false, // Remove o botão de confirmação
+                timer: 800, // Alerta desaparece após 3 segundos
+                timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
+            });
         }
     };
 
-    useEffect(() => {
-        buscarCurriculoUsuario();
-    }, [buscarCurriculoUsuario]);
+    //Funções de exclusão
+    const excluirDadosPessoais = async () => {
+        const token = localStorage.getItem('token');
+
+        Swal.fire({
+            title: 'Atenção!',
+            text: 'Excluir os dados pessoais irá excluir TODO o seu currículo! Se desejar excluir apenas um módulo como contato ou experiência, vá até o botão excluir do módulo correspondente',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Compreendi, excluir mesmo assim!',
+            cancelButtonText: 'Cancelar',
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await axios.delete(
+                        `http://127.0.0.1:8000/api/curriculums/${dadosPessoais.id}/`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Dados pessoais excluídos com sucesso!',
+                        showConfirmButton: false,
+                        timer: 800,
+                    });
+
+                    // Limpa o estado após a exclusão
+                    setDadosPessoais({
+                        nome: '',
+                        data_nascimento: '',
+                        genero: '',
+                        nacionalidade: '',
+                    });
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro ao excluir dados pessoais.',
+                        text: 'Verifique o console para mais detalhes.',
+                        showConfirmButton: false,
+                        timer: 800,
+                    });
+                }
+            }
+        });
+    };
+
+    const excluirContato = async () => {
+        const token = localStorage.getItem('token');
+
+        Swal.fire({
+            title: 'Você tem certeza?',
+            text: 'Esta ação não pode ser desfeita! Essa ação irá excluir apenas suas informações de contato',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar',
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await axios.delete(
+                        `http://127.0.0.1:8000/api/contatos/${contato.id}/`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Contato excluído com sucesso!',
+                        showConfirmButton: false,
+                        timer: 800,
+                    });
+
+                    // Limpa o estado após a exclusão
+                    setContato({
+                        email: '',
+                        telefone: '',
+                        endereco: '',
+                    });
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro ao excluir contato.',
+                        text: 'Verifique o console para mais detalhes.',
+                        showConfirmButton: false,
+                        timer: 800,
+                    });
+                }
+            }
+        });
+    };
+
+    const excluirExperiencia = async () => {
+        const token = localStorage.getItem('token');
+
+        Swal.fire({
+            title: 'Você tem certeza?',
+            text: 'Esta ação não pode ser desfeita! Essa ação irá excluir apenas suas informações de experiência',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar',
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await axios.delete(
+                        `http://127.0.0.1:8000/api/experiencias/${experiencia.id}/`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Experiência excluída com sucesso!',
+                        showConfirmButton: false,
+                        timer: 800,
+                    });
+
+                    // Limpa o estado após a exclusão
+                    setExperiencia({
+                        cargo: '',
+                        empresa: '',
+                        data_inicio: '',
+                        data_fim: '',
+                    });
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro ao excluir experiência.',
+                        text: 'Verifique o console para mais detalhes.',
+                        showConfirmButton: false,
+                        timer: 800,
+                    });
+                }
+            }
+        });
+    };
+
+    const excluirFormacao = async () => {
+        const token = localStorage.getItem('token');
+
+        Swal.fire({
+            title: 'Você tem certeza?',
+            text: 'Esta ação não pode ser desfeita! Essa ação irá excluir apenas suas informações de formação',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar',
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await axios.delete(
+                        `http://127.0.0.1:8000/api/formacoes/${formacao.id}/`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Formação excluída com sucesso!',
+                        showConfirmButton: false,
+                        timer: 800,
+                    });
+
+                    // Limpa o estado após a exclusão
+                    setFormacao({
+                        curso: '',
+                        instituicao: '',
+                        nivel: '',
+                        data_inicio: '',
+                        data_conclusao: '',
+                    });
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro ao excluir formação.',
+                        text: 'Verifique o console para mais detalhes.',
+                        showConfirmButton: false,
+                        timer: 800,
+                    });
+                }
+            }
+        });
+    };
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -393,7 +671,7 @@ const Curriculo = () => {
                                                     <div className="flex justify-end items-center">
                                                         <button
                                                             type="button"
-                                                            //onClick={() => excluirExperiencia(experiencia?.id)} // Passa o id da experiência
+                                                            onClick={() => excluirDadosPessoais()} // Chama a função de exclusão dos dados pessoais
                                                             className="w-32 h-10 bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 mt-6 rounded-lg shadow-lg text-md font-semibold transition hover:from-red-700 hover:to-red-600"
                                                         >
                                                             Excluir
@@ -484,7 +762,7 @@ const Curriculo = () => {
                                                     <div className="flex justify-end items-center">
                                                         <button
                                                             type="button"
-                                                            //onClick={() => excluirExperiencia(experiencia?.id)} // Passa o id da experiência
+                                                            onClick={() => excluirContato()}
                                                             className="w-32 h-10 bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 mt-6 rounded-lg shadow-lg text-md font-semibold transition hover:from-red-700 hover:to-red-600"
                                                         >
                                                             Excluir
@@ -499,7 +777,7 @@ const Curriculo = () => {
                                                     className="mt-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-lg shadow-lg text-sm font-semibold transition hover:from-blue-700 hover:to-blue-500"
                                                     style={{ fontFamily: "Roboto Flex, serif", fontWeight: 300 }}
                                                 >
-                                                    {dadosPessoais.id ? 'Salvar Alterações' : 'Salvar e Continuar'}
+                                                    {contato.id ? 'Salvar Alterações' : 'Salvar e Continuar'}
                                                 </button>
                                             </div>
                                         </form>
@@ -600,7 +878,7 @@ const Curriculo = () => {
                                                     <div className="flex justify-end items-center">
                                                         <button
                                                             type="button"
-                                                            //onClick={() => excluirExperiencia(experiencia?.id)} // Passa o id da experiência
+                                                            onClick={() => excluirExperiencia()}
                                                             className="w-32 h-10 bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 mt-6 rounded-lg shadow-lg text-md font-semibold transition hover:from-red-700 hover:to-red-600"
                                                         >
                                                             Excluir
@@ -737,7 +1015,7 @@ const Curriculo = () => {
                                                     <div className="flex justify-end items-center">
                                                         <button
                                                             type="button"
-                                                            //onClick={() => excluirExperiencia(experiencia?.id)} // Passa o id da experiência
+                                                            onClick={() => excluirFormacao()}
                                                             className="w-32 h-10 bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 mt-6 rounded-lg shadow-lg text-md font-semibold transition hover:from-red-700 hover:to-red-600"
                                                         >
                                                             Excluir
