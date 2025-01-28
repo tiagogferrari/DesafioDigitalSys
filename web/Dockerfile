@@ -1,24 +1,23 @@
-# Use a versão 18 do Node.js (LTS)
+# Usar a versão LTS mais recente do Node.js
 FROM node:22.13.1
 
-# Define o diretório de trabalho
+# Definir o diretório de trabalho
 WORKDIR /app
 
-# Copia os arquivos de pacotes para o diretório de trabalho
+# Copiar apenas arquivos de dependência inicialmente
 COPY package*.json ./
 
-# Instala as dependências
-RUN npm install
+# Instalar dependências de produção
+RUN npm install --only=production
 
-# Copia o restante do código-fonte
+# Copiar o restante do código
 COPY . .
 
-# Expõe a porta
+# Construir os arquivos estáticos (para produção)
+RUN npm run build
+
+# Expor a porta
 EXPOSE 3000
 
-# Configura o hot reload para o ambiente Docker
-ENV CHOKIDAR_USEPOLLING=true
-ENV CHOKIDAR_INTERVAL=100
-
-# Inicia o servidor
+# Iniciar o servidor para desenvolvimento
 CMD ["npm", "start"]
