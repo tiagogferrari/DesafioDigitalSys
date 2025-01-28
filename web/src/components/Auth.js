@@ -11,6 +11,8 @@ const Auth = ({ setShowPopup }) => {
         confirmPassword: '',
     });
     const [message, setMessage] = useState(null);
+    const [isError, setIsError] = useState(false);
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -30,33 +32,44 @@ const Auth = ({ setShowPopup }) => {
             ? 'http://127.0.0.1:8000/api/register/'
             : 'http://127.0.0.1:8000/api/login/';
         const body = isRegister
-            ? { username: formData.username, password: formData.password, email: formData.email, confirm_password:formData.confirmPassword }
+            ? { username: formData.username, password: formData.password, email: formData.email, confirm_password: formData.confirmPassword }
             : { username: formData.username, password: formData.password };
 
         try {
             const response = await axios.post(url, body);
             if (!isRegister) {
-                const token = response.data.access; // Acessando o token
-                const isSuperuser = response.data.is_superuser; // Acessando o status de superusuário
+                const token = response.data.access;
+                const isSuperuser = response.data.is_superuser;
                 localStorage.setItem('token', token);
-                localStorage.setItem('is_superuser', isSuperuser); // Salva o status no localStorage
-                console.log('Token:', token);
-                console.log('Superusuário:', isSuperuser);
-
-                // Redirecionamento baseado no status de superusuário
-                if (isSuperuser) {
-                    window.location.href = '/admin'; // Exemplo de rota para superusuário
-                } else {
-                    window.location.href = '/curriculo'; // Exemplo de rota para usuário normal
-                }
+                localStorage.setItem('is_superuser', isSuperuser);
+                window.location.href = isSuperuser ? '/admin' : '/curriculo';
             } else {
-                setMessage('Usuário registrado com sucesso! Faça seu login'); // Mensagem de sucesso no registro
+                setMessage('Usuário registrado com sucesso! Faça seu login');
+                setIsError(false); // Mensagem de sucesso
+                setFormData({
+                    username: '',
+                    password: '',
+                    email: '',
+                    confirmPassword: ''
+                });
             }
         } catch (error) {
-            if (error.response) {
-                setMessage(error.response.data.detail || 'Algo deu errado, tente novamente.');
+            if (error.response?.data) {
+                const errorData = error.response.data;
+                const errorMessages = [];
+
+                if (errorData.password) {
+                    errorMessages.push(...errorData.password);
+                }
+                if (errorData.confirm_password) {
+                    errorMessages.push(errorData.confirm_password);
+                }
+
+                setMessage(errorMessages);
+                setIsError(true); // Mensagem de erro
             } else {
-                setMessage('Erro de conexão com o servidor.');
+                setMessage(['Erro de conexão com o servidor.']);
+                setIsError(true); // Mensagem de erro
             }
         }
     };
@@ -84,18 +97,26 @@ const Auth = ({ setShowPopup }) => {
                         onClick={() => setShowPopup(false)}
                     />
                 </div>
-
                 {message && (
                     <div
-                        className={`mb-6 p-4 rounded-lg text-center font-medium ${message.includes('sucesso')
-                            ? 'bg-green-100 text-green-700 border border-green-500'
-                            : 'bg-red-100 text-red-700 border border-red-500'
+                        className={`mb-6 p-4 rounded-lg text-center font-medium border ${isError
+                            ? 'bg-red-100 text-red-700 border-red-500' // Estilo de erro
+                            : 'bg-green-100 text-green-700 border-green-500' // Estilo de sucesso
                             }`}
                     >
-                        {message}
+                        {Array.isArray(message) ? (
+                            <ul className="list-disc list-inside text-left">
+                                {message.map((msg, index) => (
+                                    // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                                    <li key={index}>{msg}</li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>{message}</p>
+                        )}
                     </div>
-                )}
 
+                )}
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                         <label htmlFor="username" className="block text-gray-700 font-medium mb-2">
@@ -111,7 +132,6 @@ const Auth = ({ setShowPopup }) => {
                             required
                         />
                     </div>
-
                     {isRegister && (
                         <div>
                             <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
@@ -128,7 +148,6 @@ const Auth = ({ setShowPopup }) => {
                             />
                         </div>
                     )}
-
                     <div>
                         <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
                             Senha
@@ -143,7 +162,6 @@ const Auth = ({ setShowPopup }) => {
                             required
                         />
                     </div>
-
                     {isRegister && (
                         <div>
                             <label htmlFor="confirmPassword" className="block text-gray-700 font-medium mb-2">

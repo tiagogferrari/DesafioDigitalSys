@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.core.validators import RegexValidator, MinLengthValidator
 from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
 from datetime import date, datetime
 from django.contrib.auth.models import User
 from .models import Curriculum, Contato, Experiencia, Formacao
@@ -147,19 +148,7 @@ class CurriculumSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("A idade mínima deve ser de 16 anos.")
         return value    
     
-""" Serializer para o Registro do Usuário
-class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ['username', 'password', 'email']
-
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
-"""
-    
+""" Serializer para o Registro do Usuário 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
@@ -169,7 +158,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['username', 'password', 'confirm_password', 'email']
 
     def validate(self, data):
-        """Verifica se as senhas coincidem"""
         if data['password'] != data['confirm_password']:
             raise ValidationError("As senhas não coincidem.")
         return data
@@ -179,3 +167,30 @@ class RegisterSerializer(serializers.ModelSerializer):
         validated_data.pop('confirm_password')
         user = User.objects.create_user(**validated_data)
         return user    
+"""
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'confirm_password', 'email']
+
+    def validate(self, data):
+        """Verifica se as senhas coincidem e valida a força da senha"""
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError({"password": "As senhas não coincidem."})
+
+        try:
+            # Valida a força da senha
+            validate_password(data['password'])
+        except ValidationError as e:
+            raise serializers.ValidationError({"password": e.messages})
+
+        return data
+
+    def create(self, validated_data):
+        # Remove o campo confirm_password do validated_data antes de criar o usuário
+        validated_data.pop('confirm_password')
+        user = User.objects.create_user(**validated_data)
+        return user
