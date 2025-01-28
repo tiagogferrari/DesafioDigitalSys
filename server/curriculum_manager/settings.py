@@ -105,8 +105,18 @@ USE_TZ = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# URL para os arquivos estáticos
+STATIC_URL = '/static/'
+
+# Caminho onde os arquivos estáticos serão coletados para produção
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Diretórios adicionais onde o Django deve procurar por arquivos estáticos
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',  # Pasta onde você coloca os arquivos estáticos durante o desenvolvimento
+]
 
 # Configurações de autenticação simples
 REST_FRAMEWORK = {

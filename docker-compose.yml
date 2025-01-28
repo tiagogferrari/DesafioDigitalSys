@@ -4,6 +4,8 @@ services:
       context: ./server
     volumes:
       - ./server:/app
+      - ./server/static:/app/static
+      - ./server/staticfiles:/app/staticfiles
     ports:
       - "8000:8000"
     environment:
