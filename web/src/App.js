@@ -7,7 +7,7 @@ import Admin from './pages/Admin';
 
 // Componente de rota protegida
 const ProtectedRoute = ({ element: Component, isSuperuser, forAdminPage, ...rest }) => {
-  // Se for uma tentativa de acessar o /admin e o usuário não for superusuário
+
   if (forAdminPage) {
     return isSuperuser ? Component : <Navigate to="/" replace />;
   }
