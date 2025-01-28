@@ -148,26 +148,6 @@ class CurriculumSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("A idade mínima deve ser de 16 anos.")
         return value    
     
-""" Serializer para o Registro do Usuário 
-class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-    confirm_password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ['username', 'password', 'confirm_password', 'email']
-
-    def validate(self, data):
-        if data['password'] != data['confirm_password']:
-            raise ValidationError("As senhas não coincidem.")
-        return data
-
-    def create(self, validated_data):
-        # Remover o campo confirm_password do validated_data
-        validated_data.pop('confirm_password')
-        user = User.objects.create_user(**validated_data)
-        return user    
-"""
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)

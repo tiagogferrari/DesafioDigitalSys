@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import recruitment from '../images/recruitment.png';
@@ -6,6 +6,11 @@ import Auth from '../components/Auth'; // Importando o componente Auth
 
 const Home = () => {
   const [showPopup, setShowPopup] = useState(false); // Estado para controlar a exibição do popup
+
+  // useEffect para limpar o localStorage quando a página for carregada
+  useEffect(() => {
+    localStorage.clear(); // Limpa tudo do localStorage
+  }, []); // O array vazio [] garante que isso aconteça apenas uma vez, quando o componente for montado
 
   return (
     <div className="bg-gradient-to-r from-blue-500 to-blue-300 min-h-screen flex flex-col">
@@ -15,7 +20,7 @@ const Home = () => {
           Pegho
         </h1>
         <button
-        type='button'
+          type='button'
           onClick={() => setShowPopup(true)} // Abre o popup ao clicar no ícone
           className="text-white hover:text-gray-100 px-4 absolute top-4 right-6 flex items-center space-x-2"
         >
@@ -33,7 +38,7 @@ const Home = () => {
             <p className="text-lg text-blue-800 md:text-xl font-semibold">
               Crie seu perfil e encontre as melhores oportunidades de trabalho. A Pegho conecta talentos com as melhores empresas.
             </p>
-            <div className="mt-8"> 
+            <div className="mt-8">
               <Link
                 onClick={() => setShowPopup(true)}
                 className="className= bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-lg shadow-lg text-lg font-semibold transition hover:from-blue-700 hover:to-blue-500" style={{ fontFamily: "Roboto Flex, serif", fontWeight: 300 }}

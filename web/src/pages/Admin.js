@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const Admin = () => {
@@ -29,7 +30,6 @@ const Admin = () => {
                 setLoading(false);
             }
         };
-
         fetchCurriculos();
     }, []);
 
@@ -68,6 +68,13 @@ const Admin = () => {
                 <h1 className="text-4xl font-bold" style={{ fontFamily: "'Playwrite IN', serif", fontWeight: 600 }}>
                     Pegho Admin
                 </h1>
+                {/* Botão de Sair no canto superior direito */}
+                <Link
+                    to="/" // Redireciona para a Home
+                    className="absolute top-4 right-6 bg-blue-300 hover:bg-blue-500 text-white px-4 py-2 mt-1 rounded-full shadow-lg text-lg font-semibold"
+                >
+                    Sair
+                </Link>
             </header>
 
             {/* Main Content */}
@@ -111,9 +118,8 @@ const Admin = () => {
                                 type='button'
                                 key={number + 1}
                                 onClick={() => paginate(number + 1)}
-                                className={`mx-1 px-4 py-2 ${
-                                    currentPage === number + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
-                                } rounded`}
+                                className={`mx-1 px-4 py-2 ${currentPage === number + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
+                                    } rounded`}
                             >
                                 {number + 1}
                             </button>

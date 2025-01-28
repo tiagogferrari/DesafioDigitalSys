@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { HiChevronDown, HiCheck } from 'react-icons/hi';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2'
 
@@ -789,6 +790,13 @@ const Curriculo = () => {
                 <h1 className="text-4xl font-bold" style={{ fontFamily: "'Playwrite IN', serif", fontWeight: 600 }}>
                     Pegho
                 </h1>
+                {/* Botão de Sair no canto superior direito */}
+                <Link
+                    to="/" // Redireciona para a Home
+                    className="absolute top-4 right-6 bg-blue-300 hover:bg-blue-500 text-white px-4 py-2 mt-1 rounded-full shadow-lg text-lg font-semibold"
+                >
+                    Sair
+                </Link>
             </header>
 
             {/* Main Content */}
@@ -798,8 +806,14 @@ const Curriculo = () => {
                     <p className="text-gray-700 text-lg mb-6">
                         Preencha os blocos com seus dados e mantenha seu currículo atualizado para se candidatar às vagas. Caso realize alterações, estes ajustes serão <strong>replicados para todas as suas candidaturas ativas.</strong>
                     </p>
+                    <p className="text-gray-700 text-lg mb-6">
+                        Lembre-se que o ícone
+                        <span className="inline-flex items-center bg-green-400 rounded-full p-1 ml-2 mr-2">
+                            <HiCheck className="text-white" size={10} />
+                        </span>
+                        aparece ao preencher completamente um bloco, mas é necessário apertar em <strong>salvar alterações</strong>!
+                    </p>
                 </div>
-
                 <div className="max-w-6xl mx-auto space-y-6">
                     {/* Blocos expansíveis */}
                     <div className="max-w-6xl mx-auto space-y-6">
@@ -1033,6 +1047,7 @@ const Curriculo = () => {
                             >
                                 {expandedSection === 'experience' && (
                                     <div className="p-4 border-t space-y-6">
+                                        <p className='ml-2'>Insira a sua última experiência.</p>
                                         <form>
                                             {/* Apenas uma experiência, sem map */}
                                             <div className="space-y-4 border p-4 rounded-lg mb-4">
@@ -1148,6 +1163,7 @@ const Curriculo = () => {
                             >
                                 {expandedSection === 'formacao' && (
                                     <div className="p-4 border-t space-y-6">
+                                        <p className='ml-2'>Insira a sua formação de nível mais alto.</p>
                                         <form>
                                             {/* Apenas uma formação, sem map */}
                                             <div className="space-y-4 border p-4 rounded-lg mb-4">
