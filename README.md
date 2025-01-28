@@ -13,6 +13,20 @@ Desenvolver um sistema de recrutamento que facilite o processo de contratação,
 
 Objetivo principal: Avaliar suas habilidades de desenvolvimento backend com Django, mas também observar a implementação de um frontend funcional.
 
+### Como rodar o projeto
+
+Clonar o repositório
+Abrir o mesmo em algum framework (como VsCode)
+Abrir um terminal e rodar o comando:
+- docker-compose up --build
+- Após isso basta acessar http://localhost:3000/ no seu navegador para ver a homepage da aplicação
+
+Observações!
+
+- Fluxo da aplicação -> HomePage -> Reigistro -> Login -> Página de cadastro de currículos (/curriculo)
+- Caso você seja um superuser (admin - username: admin; password: admin0907012) você será redirecionado automaticamente para /admin, onde poderá ver todos os currículos cadastrados
+- Acesse http://127.0.0.1:8000/admin/ e entre com os mesmos dados passados aqui anteriormente (admin) para ter acesso ao painel de admin do Django
+
 ## Tecnologias utilizadas
 
 <div style="display: inline_block"><br/>
