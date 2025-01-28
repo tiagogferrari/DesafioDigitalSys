@@ -13,6 +13,10 @@ Desenvolver um sistema de recrutamento que facilite o processo de contratação,
 
 Objetivo principal: Avaliar suas habilidades de desenvolvimento backend com Django, mas também observar a implementação de um frontend funcional.
 
+**### Como rodar o projeto
+
+Para rodar o projeto, basta clonar o repositório, abrir o mesmo em algum framework (como VsCode), no terminal, na pasta 'mãe' rodar o comando -> docker-compose up --build; após isso basta acessar http://localhost:3000/ no seu navegador para ver a homepage da aplicação**
+
 ## Tecnologias utilizadas
 
 <div style="display: inline_block"><br/>
