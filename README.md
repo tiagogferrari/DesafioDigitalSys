@@ -23,9 +23,9 @@ Abrir um terminal e rodar o comando:
 
 Observações!
 
-Fluxo da aplicação -> HomePage -> Reigistro -> Login -> Página de cadastro de currículos (/curriculo)
-Caso você seja um superuser (admin - username: admin; password: admin0907012) você será redirecionado automaticamente para /admin, onde poderá ver todos os currículos cadastrados
-Acesse http://127.0.0.1:8000/admin/ e entre com os mesmos dados passados aqui anteriormente (admin) para ter acesso ao painel de admin do Django
+- Fluxo da aplicação -> HomePage -> Reigistro -> Login -> Página de cadastro de currículos (/curriculo)
+- Caso você seja um superuser (admin - username: admin; password: admin0907012) você será redirecionado automaticamente para /admin, onde poderá ver todos os currículos cadastrados
+- Acesse http://127.0.0.1:8000/admin/ e entre com os mesmos dados passados aqui anteriormente (admin) para ter acesso ao painel de admin do Django
 
 ## Tecnologias utilizadas
 
