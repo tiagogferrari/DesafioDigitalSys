@@ -22,7 +22,6 @@ const Auth = ({ setShowPopup }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validação simples no frontend
         if (isRegister && formData.password !== formData.confirmPassword) {
             setMessage('As senhas não coincidem.');
             return;
@@ -45,7 +44,7 @@ const Auth = ({ setShowPopup }) => {
                 window.location.href = isSuperuser ? '/admin' : '/curriculo';
             } else {
                 setMessage('Usuário registrado com sucesso! Faça seu login');
-                setIsError(false); // Mensagem de sucesso
+                setIsError(false);
                 setFormData({
                     username: '',
                     password: '',
@@ -66,10 +65,10 @@ const Auth = ({ setShowPopup }) => {
                 }
 
                 setMessage(errorMessages);
-                setIsError(true); // Mensagem de erro
+                setIsError(true);
             } else {
                 setMessage(['Erro de conexão com o servidor.']);
-                setIsError(true); // Mensagem de erro
+                setIsError(true);
             }
         }
     };
@@ -100,8 +99,8 @@ const Auth = ({ setShowPopup }) => {
                 {message && (
                     <div
                         className={`mb-6 p-4 rounded-lg text-center font-medium border ${isError
-                            ? 'bg-red-100 text-red-700 border-red-500' // Estilo de erro
-                            : 'bg-green-100 text-green-700 border-green-500' // Estilo de sucesso
+                            ? 'bg-red-100 text-red-700 border-red-500'
+                            : 'bg-green-100 text-green-700 border-green-500' 
                             }`}
                     >
                         {Array.isArray(message) ? (

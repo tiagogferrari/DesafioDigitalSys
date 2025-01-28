@@ -15,7 +15,7 @@ class CurriculumViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)  # Associar o currículo ao usuário autenticado
+        serializer.save(user=self.request.user)  # Associa o currículo ao usuário autenticado
         
     @action(detail=False, methods=['get'])
     def verificar_curriculo(self, request):
@@ -54,8 +54,8 @@ class ContatoViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
-        curriculum = Curriculum.objects.get(user=user)  # Obter o currículo do usuário
-        serializer.save(curriculum=curriculum)  # Associar o contato ao currículo
+        curriculum = Curriculum.objects.get(user=user)  # Obtem o currículo do usuário
+        serializer.save(curriculum=curriculum)  # Associa o contato ao currículo
 
 class ExperienciaViewSet(viewsets.ModelViewSet):
     queryset = Experiencia.objects.all()
@@ -63,10 +63,10 @@ class ExperienciaViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        # Certificar que a experiência está sendo associada ao currículo correto e ao usuário autenticado
+        # Verifica se a experiência está sendo associada ao currículo correto e ao usuário autenticado
         user = self.request.user
-        curriculum = Curriculum.objects.get(user=user)  # Obter o currículo do usuário
-        serializer.save(curriculum=curriculum)  # Associar a experiência ao currículo
+        curriculum = Curriculum.objects.get(user=user)  # Obtem o currículo do usuário
+        serializer.save(curriculum=curriculum)  # Associa a experiência ao currículo
 
 class FormacaoViewSet(viewsets.ModelViewSet):
     queryset = Formacao.objects.all()
@@ -74,10 +74,9 @@ class FormacaoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        # Certificar que a formação está sendo associada ao currículo correto e ao usuário autenticado
         user = self.request.user
-        curriculum = Curriculum.objects.get(user=user)  # Obter o currículo do usuário
-        serializer.save(curriculum=curriculum)  # Associar a formação ao currículo
+        curriculum = Curriculum.objects.get(user=user)  
+        serializer.save(curriculum=curriculum)
 
 # View para o registro de usuários
 class RegisterView(APIView):

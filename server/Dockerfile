@@ -1,31 +1,30 @@
-# Usar uma imagem oficial do Python
 FROM python:3.9-slim-buster
 
-# Atualizar pacotes e instalar ferramentas necessárias
+# Atualiza pacotes e instala ferramentas necessárias
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential && \
     rm -rf /var/lib/apt/lists/*
 
-# Definir o diretório de trabalho dentro do container
+# Define o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Criar um usuário não-root para rodar o container
+# Cria um usuário não-root para rodar o container
 RUN useradd -m appuser
 
-# Copiar o arquivo de dependências
+# Copia o arquivo de dependências
 COPY requirements.txt .
 
-# Atualizar pip e instalar dependências
+# Atualiza pip e instala dependências
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copiar o código da aplicação para dentro do container
+# Copia o código da aplicação para dentro do container
 COPY . .
 
-# Mudar para o usuário não-root
+# Muda para o usuário não-root
 USER appuser
 
-# Expor a porta onde o Django vai rodar
+# Expõe a porta onde o Django vai rodar
 EXPOSE 8000
 
 # Comando para rodar o servidor Django

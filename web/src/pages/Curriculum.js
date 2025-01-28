@@ -69,12 +69,12 @@ const Curriculo = () => {
         setExpandedSection((prev) => (prev === section ? null : section));
     };
 
-    const executadoRef = useRef(false); // Ref para rastrear se a função já foi executada
+    const executadoRef = useRef(false); // Ref que rastreia se a função já foi executada
 
     useEffect(() => {
         const buscarCurriculoUsuario = async () => {
-            if (executadoRef.current) return; // Evita execuções repetidas
-            executadoRef.current = true; // Marca como executado
+            if (executadoRef.current) return; 
+            executadoRef.current = true;
 
             try {
                 const token = localStorage.getItem('token');
@@ -160,10 +160,9 @@ const Curriculo = () => {
         try {
             let response;
             if (dadosPessoais.id) {
-                // Atualiza os dados pessoais (PUT)
                 response = await axios.put(
                     `http://127.0.0.1:8000/api/curriculums/${dadosPessoais.id}/`,
-                    dadosPessoais, // Envia apenas os dados pessoais
+                    dadosPessoais,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -174,7 +173,7 @@ const Curriculo = () => {
                 // Cria novos dados pessoais (POST)
                 response = await axios.post(
                     'http://127.0.0.1:8000/api/curriculums/',
-                    dadosPessoais, // Envia apenas os dados pessoais
+                    dadosPessoais,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -196,11 +195,9 @@ const Curriculo = () => {
             console.log("Dados sendo enviados:", dadosPessoais);
 
             if (error.response && error.response.status === 400) {
-                // Erro de validação (campo obrigatório ou inválido)
-                const erros = error.response.data; // Erros de validação do backend
+                const erros = error.response.data;
                 let mensagemErro = 'Verifique os seguintes erros: ';
 
-                // Concatena as mensagens de erro
                 // biome-ignore lint/complexity/noForEach: <explanation>
                 Object.keys(erros).forEach((campo) => {
                     mensagemErro += `\n${campo}: ${erros[campo].join(', ')}`;
@@ -210,10 +207,9 @@ const Curriculo = () => {
                     icon: 'error',
                     title: 'Erro ao salvar/editar dados pessoais.',
                     text: mensagemErro,
-                    showConfirmButton: true, // Exibe o botão de confirmação
+                    showConfirmButton: true,
                 });
             } else {
-                // Erro genérico
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro ao salvar/editar dados pessoais.',
@@ -226,168 +222,12 @@ const Curriculo = () => {
         }
     };
 
-    /*
-        const salvarOuEditarContato = async () => {
-            const token = localStorage.getItem('token');
-    
-            try {
-                let response;
-                if (contato.id) {
-                    // Atualiza o contato (PUT)
-                    response = await axios.put(
-                        `http://127.0.0.1:8000/api/contatos/${contato.id}/`,
-                        contato, // Envia apenas o contato
-                        {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
-                    );
-                } else {
-                    // Cria um novo contato (POST)
-                    response = await axios.post(
-                        'http://127.0.0.1:8000/api/contatos/',
-                        contato, // Envia apenas o contato
-                        {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
-                    );
-                }
-    
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Dados de contato salvos/atualizados com sucesso!',
-                    showConfirmButton: false, // Remove o botão de confirmação
-                    timer: 800, // Alerta desaparece após 2 segundos
-                    timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
-                });
-    
-                // Atualiza o estado com os novos dados
-                setContato(response.data);
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro ao salvar/editar dados de contato.',
-                    text: 'Verifique o console para mais detalhes.',
-                    showConfirmButton: false, // Remove o botão de confirmação
-                    timer: 800, // Alerta desaparece após 3 segundos
-                    timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
-                });
-            }
-        };
-    
-        const salvarOuEditarExperiencia = async () => {
-            const token = localStorage.getItem('token');
-    
-            try {
-                let response;
-                if (experiencia.id) {
-                    // Atualiza a experiência existente (PUT)
-                    response = await axios.put(
-                        `http://127.0.0.1:8000/api/experiencias/${experiencia.id}/`,
-                        experiencia, // Envia apenas a experiência
-                        {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
-                    );
-                } else {
-                    // Cria uma nova experiência (POST)
-                    response = await axios.post(
-                        'http://127.0.0.1:8000/api/experiencias/',
-                        experiencia, // Envia apenas a experiência
-                        {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
-                    );
-                }
-    
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Dados de experiência salvos/atualizados com sucesso!',
-                    showConfirmButton: false, // Remove o botão de confirmação
-                    timer: 800, // Alerta desaparece após 2 segundos
-                    timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
-                });
-    
-                // Atualiza o estado com os dados da nova experiência
-                setExperiencia(response.data);
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro ao salvar/editar dados de experiência.',
-                    text: 'Verifique o console para mais detalhes.',
-                    showConfirmButton: false, // Remove o botão de confirmação
-                    timer: 800, // Alerta desaparece após 3 segundos
-                    timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
-                });
-            }
-        };
-    
-        const salvarOuEditarFormacao = async () => {
-            const token = localStorage.getItem('token');
-    
-            try {
-                let response;
-                if (formacao.id) {
-                    // Atualiza a formação existente (PUT)
-                    response = await axios.put(
-                        `http://127.0.0.1:8000/api/formacoes/${formacao.id}/`,
-                        formacao, // Envia a formação inteira
-                        {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
-                    );
-                } else {
-                    // Cria uma nova formação (POST)
-                    response = await axios.post(
-                        'http://127.0.0.1:8000/api/formacoes/',
-                        formacao, // Envia a formação inteira
-                        {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
-                    );
-                }
-    
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Dados de formação salvos/atualizados com sucesso!',
-                    showConfirmButton: false, // Remove o botão de confirmação
-                    timer: 800, // Alerta desaparece após 2 segundos
-                    timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
-                });
-    
-                // Atualiza o estado com os dados da nova formação
-                setFormacao(response.data);
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro ao salvar/editar dados da formação.',
-                    text: 'Verifique o console para mais detalhes.',
-                    showConfirmButton: false, // Remove o botão de confirmação
-                    timer: 800, // Alerta desaparece após 3 segundos
-                    timerProgressBar: false, // Mostra uma barra de progresso enquanto o tempo passa
-                });
-            }
-        };
-    */
-
     const salvarOuEditarContato = async () => {
         const token = localStorage.getItem('token');
 
         try {
             let response;
             if (contato.id) {
-                // Atualiza o contato (PUT)
                 response = await axios.put(
                     `http://127.0.0.1:8000/api/contatos/${contato.id}/`,
                     contato,
@@ -398,7 +238,6 @@ const Curriculo = () => {
                     }
                 );
             } else {
-                // Cria um novo contato (POST)
                 response = await axios.post(
                     'http://127.0.0.1:8000/api/contatos/',
                     contato,
@@ -610,7 +449,6 @@ const Curriculo = () => {
                         timer: 800,
                     });
 
-                    // Limpa o estado após a exclusão
                     setDadosPessoais({
                         nome: '',
                         data_nascimento: '',
@@ -661,7 +499,6 @@ const Curriculo = () => {
                         timer: 800,
                     });
 
-                    // Limpa o estado após a exclusão
                     setContato({
                         email: '',
                         telefone: '',
@@ -711,7 +548,6 @@ const Curriculo = () => {
                         timer: 800,
                     });
 
-                    // Limpa o estado após a exclusão
                     setExperiencia({
                         cargo: '',
                         empresa: '',
@@ -762,7 +598,6 @@ const Curriculo = () => {
                         timer: 800,
                     });
 
-                    // Limpa o estado após a exclusão
                     setFormacao({
                         curso: '',
                         instituicao: '',
@@ -792,7 +627,7 @@ const Curriculo = () => {
                 </h1>
                 {/* Botão de Sair no canto superior direito */}
                 <Link
-                    to="/" // Redireciona para a Home
+                    to="/"
                     className="absolute top-4 right-6 bg-blue-300 hover:bg-blue-500 text-white px-4 py-2 mt-1 rounded-full shadow-lg text-lg font-semibold"
                 >
                     Sair
@@ -905,7 +740,7 @@ const Curriculo = () => {
                                                     <div className="flex justify-end items-center">
                                                         <button
                                                             type="button"
-                                                            onClick={() => excluirDadosPessoais()} // Chama a função de exclusão dos dados pessoais
+                                                            onClick={() => excluirDadosPessoais()}
                                                             className="w-32 h-10 bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 mt-6 rounded-lg shadow-lg text-md font-semibold transition hover:from-red-700 hover:to-red-600"
                                                         >
                                                             Excluir
@@ -1007,7 +842,7 @@ const Curriculo = () => {
                                             <div className="flex justify-end">
                                                 <button
                                                     type="button"
-                                                    onClick={salvarOuEditarContato} // Chama a função específica
+                                                    onClick={salvarOuEditarContato}
                                                     className="mt-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-lg shadow-lg text-sm font-semibold transition hover:from-blue-700 hover:to-blue-500"
                                                     style={{ fontFamily: "Roboto Flex, serif", fontWeight: 300 }}
                                                 >
@@ -1124,7 +959,7 @@ const Curriculo = () => {
                                             <div className="flex justify-end space-x-4">
                                                 <button
                                                     type="button"
-                                                    onClick={salvarOuEditarExperiencia} // Apenas uma experiência para salvar/editar
+                                                    onClick={salvarOuEditarExperiencia}
                                                     className="mt-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-lg shadow-lg text-sm font-semibold transition hover:from-blue-700 hover:to-blue-500"
                                                 >
                                                     {experiencia?.id ? 'Salvar Alterações' : 'Salvar e Continuar'}
@@ -1263,7 +1098,7 @@ const Curriculo = () => {
                                             <div className="flex justify-end space-x-4">
                                                 <button
                                                     type="button"
-                                                    onClick={salvarOuEditarFormacao} // Apenas uma formação para salvar/editar
+                                                    onClick={salvarOuEditarFormacao}
                                                     className="mt-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-lg shadow-lg text-sm font-semibold transition hover:from-blue-700 hover:to-blue-500"
                                                 >
                                                     {formacao?.id ? 'Salvar Alterações' : 'Salvar e Continuar'}

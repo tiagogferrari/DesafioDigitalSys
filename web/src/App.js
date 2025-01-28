@@ -12,12 +12,11 @@ const ProtectedRoute = ({ element: Component, isSuperuser, forAdminPage, ...rest
     return isSuperuser ? Component : <Navigate to="/" replace />;
   }
 
-  // Se for uma tentativa de acessar o /curriculo e o usuário for superusuário
   return !isSuperuser ? Component : <Navigate to="/admin" replace />;
 };
 
 function App() {
-  const isSuperuser = localStorage.getItem('is_superuser') === 'true'; // Verifica se o usuário é superusuário
+  const isSuperuser = localStorage.getItem('is_superuser') === 'true';
 
   return (
     <Router>
@@ -33,7 +32,7 @@ function App() {
               <ProtectedRoute
                 element={<Curriculum />}
                 isSuperuser={isSuperuser}
-                forAdminPage={false} // Passa false para indicar que não é a página de admin
+                forAdminPage={false} 
               />
             }
           />
@@ -45,7 +44,7 @@ function App() {
               <ProtectedRoute
                 element={<Admin />}
                 isSuperuser={isSuperuser}
-                forAdminPage={true} // Passa true para indicar que é a página de admin
+                forAdminPage={true}
               />
             }
           />

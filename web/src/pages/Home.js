@@ -2,15 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import recruitment from '../images/recruitment.png';
-import Auth from '../components/Auth'; // Importando o componente Auth
+import Auth from '../components/Auth';
 
 const Home = () => {
-  const [showPopup, setShowPopup] = useState(false); // Estado para controlar a exibição do popup
+  const [showPopup, setShowPopup] = useState(false); 
 
-  // useEffect para limpar o localStorage quando a página for carregada
   useEffect(() => {
-    localStorage.clear(); // Limpa tudo do localStorage
-  }, []); // O array vazio [] garante que isso aconteça apenas uma vez, quando o componente for montado
+    localStorage.clear(); 
+  }, []);
 
   return (
     <div className="bg-gradient-to-r from-blue-500 to-blue-300 min-h-screen flex flex-col">
@@ -21,7 +20,7 @@ const Home = () => {
         </h1>
         <button
           type='button'
-          onClick={() => setShowPopup(true)} // Abre o popup ao clicar no ícone
+          onClick={() => setShowPopup(true)} 
           className="text-white hover:text-gray-100 px-4 absolute top-4 right-6 flex items-center space-x-2"
         >
           <AccountCircleIcon style={{ fontSize: 40 }} /> {/* Ícone de login */}

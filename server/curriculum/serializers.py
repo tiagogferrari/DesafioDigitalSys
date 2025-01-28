@@ -35,7 +35,7 @@ class ExperienciaSerializer(serializers.ModelSerializer):
         model = Experiencia
         fields = '__all__'
         extra_kwargs = {
-            'curriculum': {'required': False}  # Torna o campo curriculum opcional
+            'curriculum': {'required': False}
         }
     
     def validate_empresa(self, value):
@@ -65,7 +65,7 @@ class ExperienciaSerializer(serializers.ModelSerializer):
         if data_inicio:
             data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d').date()  # Converte para datetime.date
         
-        # Converte a data de término para datetime.date, caso necessário
+        # Converte a data de término para datetime.date
         if isinstance(value, str):
             value = datetime.strptime(value, '%Y-%m-%d').date()
 
@@ -79,7 +79,7 @@ class FormacaoSerializer(serializers.ModelSerializer):
         model = Formacao
         fields = '__all__'
         extra_kwargs = {
-            'curriculum': {'required': False}  # Torna o campo curriculum opcional
+            'curriculum': {'required': False}
         }
 
     def validate_instituicao(self, value):
@@ -105,11 +105,11 @@ class FormacaoSerializer(serializers.ModelSerializer):
         """Validação para garantir que a data de término seja posterior à data de início."""
         data_inicio = self.initial_data.get('data_inicio')  # Obtém a data de início enviada
 
-        # Converte a data de início para datetime.date, se necessário
+        # Converte a data de início para datetime.date
         if isinstance(data_inicio, str):
             data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d').date()
 
-        # Converte a data de término para datetime.date, se necessário
+        # Converte a data de término para datetime.date
         if isinstance(value, str):
             value = datetime.strptime(value, '%Y-%m-%d').date()
 
@@ -143,7 +143,7 @@ class CurriculumSerializer(serializers.ModelSerializer):
     def validate_data_nascimento(self, value):
         """Validação para garantir que a idade mínima seja de 16 anos."""
         today = date.today()
-        idade = today.year - value.year - ((today.month, today.day) < (value.month, value.day))  # Calculando a idade
+        idade = today.year - value.year - ((today.month, today.day) < (value.month, value.day))
         if idade < 16:
             raise serializers.ValidationError("A idade mínima deve ser de 16 anos.")
         return value    

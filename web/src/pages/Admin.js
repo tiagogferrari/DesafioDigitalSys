@@ -4,15 +4,15 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const Admin = () => {
-    const [curriculos, setCurriculos] = useState([]); // Estado para armazenar os currículos
-    const [currentPage, setCurrentPage] = useState(1); // Estado para controlar a paginação
-    const [itemsPerPage] = useState(6); // Quantidade de itens por página
-    const [loading, setLoading] = useState(true); // Estado para controlar o carregamento
-    const [error, setError] = useState(null); // Estado para tratar erros
-    const [selectedCurriculo, setSelectedCurriculo] = useState(null); // Estado para armazenar o currículo selecionado
-    const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar a abertura do modal
+    const [curriculos, setCurriculos] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1); 
+    const [itemsPerPage] = useState(6);
+    const [loading, setLoading] = useState(true); 
+    const [error, setError] = useState(null);
+    const [selectedCurriculo, setSelectedCurriculo] = useState(null); 
+    const [isModalOpen, setIsModalOpen] = useState(false); 
 
-    // Função para buscar os currículos da API
+    // Busca os currículos da API
     useEffect(() => {
         const fetchCurriculos = async () => {
             try {
@@ -68,9 +68,8 @@ const Admin = () => {
                 <h1 className="text-4xl font-bold" style={{ fontFamily: "'Playwrite IN', serif", fontWeight: 600 }}>
                     Pegho Admin
                 </h1>
-                {/* Botão de Sair no canto superior direito */}
                 <Link
-                    to="/" // Redireciona para a Home
+                    to="/"
                     className="absolute top-4 right-6 bg-blue-300 hover:bg-blue-500 text-white px-4 py-2 mt-1 rounded-full shadow-lg text-lg font-semibold"
                 >
                     Sair
