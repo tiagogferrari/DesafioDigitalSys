@@ -19,7 +19,7 @@ Clonar o repositório
 Abrir o mesmo em algum framework (como VsCode)
 Abrir um terminal e rodar o comando:
 - docker-compose up --build
-Após isso basta acessar http://localhost:3000/ no seu navegador para ver a homepage da aplicação
+- Após isso basta acessar http://localhost:3000/ no seu navegador para ver a homepage da aplicação
 
 Observações!
 
