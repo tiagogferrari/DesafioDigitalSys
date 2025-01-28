@@ -6,6 +6,7 @@ services:
       - ./server:/app
       - ./server/static:/app/static
       - ./server/staticfiles:/app/staticfiles
+      - ./server/db.sqlite3:/app/db.sqlite3
     ports:
       - "8000:8000"
     environment:
