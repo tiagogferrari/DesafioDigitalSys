@@ -1,23 +1,23 @@
-# Usar a versão LTS mais recente do Node.js
-FROM node:22.13.1
+# Usar a versão LTS do Node.js (sugiro 18.x ou 20.x para maior compatibilidade com React)
+FROM node:20.18.2
 
 # Definir o diretório de trabalho
 WORKDIR /app
 
-# Copiar apenas arquivos de dependência inicialmente
+# Copiar arquivos de dependência
 COPY package*.json ./
 
-# Instalar dependências de produção
-RUN npm install --only=production
+# Instalar TODAS as dependências (incluindo devDependencies)
+RUN npm install
 
 # Copiar o restante do código
 COPY . .
 
-# Construir os arquivos estáticos (para produção)
+# Construir os arquivos estáticos
 RUN npm run build
 
 # Expor a porta
 EXPOSE 3000
 
-# Iniciar o servidor para desenvolvimento
+# Iniciar o servidor (para produção, considere usar um servidor estático como `serve`)
 CMD ["npm", "start"]
